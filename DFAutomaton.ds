@@ -1,0 +1,39 @@
+namespace Automata
+{
+    /// <summary>
+    /// Defines a deterministic finite automaton.
+    /// </summary>
+    public class DFAutomaton<TState, TChar> : IAutomaton<TChar>
+    {
+        public const this(set TState StartState, set LinearSet<TState> AcceptingStates, set IFunction<Pair<TState, TChar>, TState> TransitionFunction);
+        
+        public TState StartState { const get; private set; }
+        public LinearSet<TState> AcceptingStates { const get; private set; }
+        public IFunction<Pair<TState, TChar>, TState> TransitionFunction { const get; private set; }
+        
+        public const TState PerformTransition(TState State, TChar Character)
+        {
+            return TransitionFunction.Apply(new Pair<TState, TChar>(State, Character));
+        }
+        public const TState PerformExtendedTransition(TState State, TChar[] Characters)
+        {
+            var result = State;
+            foreach (var item in Characters)
+            {
+                result = PerformTransition(result, item);
+            }
+            return result;
+        }
+        
+        public const bool IsAcceptingState(TState State)
+        {
+            var acceptStates = AcceptingStates;
+            return acceptStates.Contains(State);
+        }
+        
+        public const bool Accepts(TChar[] Characters)
+        {
+            return IsAcceptingState(PerformExtendedTransition(StartState, Characters));
+        }
+    }
+}

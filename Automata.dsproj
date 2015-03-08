@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="Automata">
+  <Setter Property="TargetPlatform" Value="C++" />
+  <Setter Property="AssemblyName" Value="Automata" />
+  <ItemGroup>
+    <RuntimeLibrary Include="PlatformRT" />
+    <RuntimeLibrary Include="PortableRT" />
+    <RuntimeLibrary Include="System" />
+    <RuntimeLibrary Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DFAutomaton.ds" />
+    <Compile Include="IAutomaton.ds" />
+    <Compile Include="Pair.ds" />
+    <Compile Include="IFunction.ds" />
+    <Compile Include="UnorderedMapFunction.ds" />
+    <Compile Include="NFAutomaton.ds" />
+    <Compile Include="LinearSet.ds" />
+  </ItemGroup>
+</Project>

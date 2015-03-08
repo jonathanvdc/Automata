@@ -1,0 +1,31 @@
+namespace Automata
+{
+    /// <summary>
+    /// Defines an immutable pair.
+    /// </summary>
+    public struct Pair<TFirst, TSecond>
+    {
+        /// <summary>
+        /// Creates a new immutable pair.
+        /// </summary>
+        public const this(set TFirst First, set TSecond Second);
+        
+        /// <summary>
+        /// Gets the pair's first element.
+        /// </summary>
+        public TFirst First { const get; private set; }
+        /// <summary>
+        /// Gets the pair's second element.
+        /// </summary>
+        public TSecond Second { const get; private set; }
+
+        public const bool operator ==(Pair<TFirst, TSecond> Other)
+        {
+            return First == Other.First && Second == Other.Second;
+        }
+        public const bool operator !=(Pair<TFirst, TSecond> Other)
+        {
+            return First != Other.First || Second != Other.Second;
+        }
+    }
+}
