@@ -1,0 +1,20 @@
+using std;
+
+namespace Automata
+{
+    /// <summary>
+    /// Defines a transition table that uses an unordered_map under the hood.
+    /// </summary>
+    public struct TransitionTable<TSource, TTarget> : IFunction<TSource, TTarget>
+    {
+        public const this();
+        public const this(set unordered_map<TSource, TTarget> Map);
+        
+        public unordered_map<TSource, TTarget> Map { const get; private set; }
+        
+        public const TTarget Apply(TSource Value)
+        {
+            return Map[Value];
+        }
+    }
+}

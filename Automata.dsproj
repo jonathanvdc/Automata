@@ -16,5 +16,8 @@
     <Compile Include="UnorderedMapFunction.ds" />
     <Compile Include="NFAutomaton.ds" />
     <Compile Include="LinearSet.ds" />
+    <Compile Include="TransitionTable.ds" />
+    <Compile Include="Optional.ds" />
+    <Compile Include="ENAutomaton.ds" />
   </ItemGroup>
 </Project>

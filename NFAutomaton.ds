@@ -5,17 +5,18 @@ namespace Automata
     /// <summary>
     /// Defines a non-deterministic finite automaton.
     /// </summary>
-    public class NFAutomaton<TState, TChar> : IAutomaton<TChar>
+    public struct NFAutomaton<TState, TChar> : IAutomaton<TChar>
     {
-        public const this(set TState StartState, set LinearSet<TState> AcceptingStates, set IFunction<Pair<TState, TChar>, LinearSet<TState>> TransitionFunction);
+        public const this(set TState StartState, set LinearSet<TState> AcceptingStates, set TransitionTable<Pair<TState, TChar>, LinearSet<TState>> TransitionFunction);
         
         public TState StartState { const get; private set; }
         public LinearSet<TState> AcceptingStates { const get; private set; }
-        public IFunction<Pair<TState, TChar>, LinearSet<TState>> TransitionFunction { const get; private set; }
+        public TransitionTable<Pair<TState, TChar>, LinearSet<TState>> TransitionFunction { const get; private set; }
         
         public const LinearSet<TState> PerformTransition(TState State, TChar Character)
         {
-            return TransitionFunction.Apply(new Pair<TState, TChar>(State, Character));
+            var transFun = TransitionFunction;
+            return transFun.Apply(new Pair<TState, TChar>(State, Character));
         }
         public const LinearSet<TState> PerformAllTransitions(LinearSet<TState> States, TChar Character)
         {
@@ -87,7 +88,7 @@ namespace Automata
                 nextStates.AddAll(accumulatedStates);
             }
             
-            var transFun = new UnorderedMapFunction<Pair<LinearSet<TState>, TChar>, LinearSet<TState>>(transMap);
+            var transFun = new TransitionTable<Pair<LinearSet<TState>, TChar>, LinearSet<TState>>(transMap);
             return new DFAutomaton<LinearSet<TState>, TChar>(startState, accStates, transFun);
         }
     }

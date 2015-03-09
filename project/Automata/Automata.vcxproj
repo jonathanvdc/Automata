@@ -10,6 +10,35 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ArraySlice.h" />
+    <ClInclude Include="ArraySlice.hxx" />
+    <ClInclude Include="AutomatonParser.h" />
+    <ClInclude Include="DFAutomaton.h" />
+    <ClInclude Include="DFAutomaton.hxx" />
+    <ClInclude Include="ENFAutomaton.h" />
+    <ClInclude Include="ENFAutomaton.hxx" />
+    <ClInclude Include="HashExtensions.h" />
+    <ClInclude Include="IAutomaton.h" />
+    <ClInclude Include="IFunction.h" />
+    <ClInclude Include="LambdaFunction.h" />
+    <ClInclude Include="LinearSet.h" />
+    <ClInclude Include="LinearSet.hxx" />
+    <ClInclude Include="NFAutomaton.h" />
+    <ClInclude Include="NFAutomaton.hxx" />
+    <ClInclude Include="Optional.h" />
+    <ClInclude Include="Optional.hxx" />
+    <ClInclude Include="Pair.h" />
+    <ClInclude Include="Pair.hxx" />
+    <ClInclude Include="TransitionTable.h" />
+    <ClInclude Include="TransitionTable.hxx" />
+    <ClInclude Include="UnorderedMapFunction.h" />
+    <ClInclude Include="UnorderedMapFunction.hxx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Automata.cpp" />
+    <ClCompile Include="AutomatonParser.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C1D8A6C6-0EE0-4CE9-A4DC-2C9A73AA631C}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -77,31 +106,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\bin\ArraySlice.h" />
-    <ClInclude Include="..\..\bin\ArraySlice.hxx" />
-    <ClInclude Include="..\..\bin\DFAutomaton.h" />
-    <ClInclude Include="..\..\bin\DFAutomaton.hxx" />
-    <ClInclude Include="..\..\bin\IAutomaton.h" />
-    <ClInclude Include="..\..\bin\IFunction.h" />
-    <ClInclude Include="..\..\bin\LinearSet.h" />
-    <ClInclude Include="..\..\bin\LinearSet.hxx" />
-    <ClInclude Include="..\..\bin\NFAutomaton.h" />
-    <ClInclude Include="..\..\bin\NFAutomaton.hxx" />
-    <ClInclude Include="..\..\bin\Pair.h" />
-    <ClInclude Include="..\..\bin\Pair.hxx" />
-    <ClInclude Include="..\..\bin\UnorderedMapFunction.h" />
-    <ClInclude Include="..\..\bin\UnorderedMapFunction.hxx" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Automata.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Xml Include="..\..\bin\Automata.xml" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
