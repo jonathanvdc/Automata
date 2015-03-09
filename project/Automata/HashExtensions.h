@@ -1,6 +1,6 @@
 #pragma once
-#include "../../bin/Pair.h"
-#include "../../bin/LinearSet.h"
+#include "Pair.h"
+#include "LinearSet.h"
 
 namespace std
 {

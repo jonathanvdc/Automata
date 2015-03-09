@@ -9,11 +9,11 @@
 #include <set>
 #include <sstream>
 #include <fstream>
-#include "../../bin/DFAutomaton.h"
-#include "../../bin/NFAutomaton.h"
-#include "../../bin/ENFAutomaton.h"
-#include "../../bin/ArraySlice.h"
-#include "../../bin/TransitionTable.h"
+#include "DFAutomaton.h"
+#include "NFAutomaton.h"
+#include "ENFAutomaton.h"
+#include "ArraySlice.h"
+#include "TransitionTable.h"
 #include "AutomatonParser.h"
 #include "HashExtensions.h"
 #include "LambdaFunction.h"

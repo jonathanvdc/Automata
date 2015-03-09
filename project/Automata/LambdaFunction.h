@@ -1,6 +1,6 @@
 #pragma once
 #include <functional>
-#include "../../bin/IFunction.h"
+#include "IFunction.h"
 
 namespace Automata
 {
