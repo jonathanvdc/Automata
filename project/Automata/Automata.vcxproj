@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClInclude Include="ArraySlice.h" />
     <ClInclude Include="ArraySlice.hxx" />
+    <ClInclude Include="AutomatonDotPrinter.h" />
     <ClInclude Include="AutomatonParser.h" />
     <ClInclude Include="DFAutomaton.h" />
     <ClInclude Include="DFAutomaton.hxx" />
@@ -33,6 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Automata.cpp" />
+    <ClCompile Include="AutomatonDotPrinter.cpp" />
     <ClCompile Include="AutomatonParser.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

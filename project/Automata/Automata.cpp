@@ -17,6 +17,7 @@
 #include "AutomatonParser.h"
 #include "HashExtensions.h"
 #include "LambdaFunction.h"
+#include "AutomatonDotPrinter.h"
 
 typedef std::string State;
 typedef std::string Symbol;
@@ -55,9 +56,10 @@ int main(int argc, const char* argv[])
 	if (argc < 2)
 	{
 		std::cout << "No arguments have been specified. Give me something to do:" << std::endl;
-		std::cout << " * ssc <input file>.nfa <output file>.dfa" << std::endl;
-		std::cout << " * mssc <input file>.enfa <output file>.dfa" << std::endl;
-		std::cout << " * accepts <input file> <string>" << std::endl;
+		std::cout << " * ssc <input file>.nfa <output file>.dfa (NFA->DFA conversion)" << std::endl;
+		std::cout << " * mssc <input file>.enfa <output file>.dfa (e-NFA->DFA conversion)" << std::endl;
+		std::cout << " * accepts <input file> <string> (test a string)" << std::endl;
+		std::cout << " * dot <input file>.dfa <target file>.dot (gets a dot language representation)" << std::endl;
 		return 0;
 	}
 
@@ -71,7 +73,17 @@ int main(int argc, const char* argv[])
 		return 0;
 	}
 
-	if (std::string(argv[1]) == "ssc")
+	if (std::string(argv[1]) == "dot")
+	{
+		auto dfa = parser.ReadDFAutomaton(input);
+
+		AutomatonDotPrinter printer;
+
+		std::ofstream output(argv[3]);
+
+		printer.Write(dfa, output);
+	}
+	else if (std::string(argv[1]) == "ssc")
 	{
 		auto nfa = parser.ReadNFAutomaton(input);
 		input.close();

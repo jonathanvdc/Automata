@@ -72,12 +72,18 @@
     <ClInclude Include="ArraySlice.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AutomatonDotPrinter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Automata.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AutomatonParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AutomatonDotPrinter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
