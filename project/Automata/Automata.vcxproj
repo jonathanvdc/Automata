@@ -28,12 +28,8 @@
     <ClInclude Include="NFAutomaton.hxx" />
     <ClInclude Include="Optional.h" />
     <ClInclude Include="Optional.hxx" />
-    <ClInclude Include="Pair.h" />
-    <ClInclude Include="Pair.hxx" />
     <ClInclude Include="TransitionTable.h" />
     <ClInclude Include="TransitionTable.hxx" />
-    <ClInclude Include="UnorderedMapFunction.h" />
-    <ClInclude Include="UnorderedMapFunction.hxx" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Automata.cpp" />

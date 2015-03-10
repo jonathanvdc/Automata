@@ -1,15 +1,16 @@
 #pragma once
-#include "Pair.h"
+#include <utility>
 #include "LinearSet.h"
+#include "Optional.h"
 
 namespace std
 {
 	template<typename T, typename V>
-	struct hash<Pair<T, V>>
+	struct hash<std::pair<T, V>>
 	{
-		size_t operator()(const Automata::Pair<T, V>& Value) const
+		size_t operator()(const std::pair<T, V>& Value) const
 		{
-			return hash<T>()(Value.getFirst()) ^ hash<V>()(Value.getSecond());
+			return hash<T>()(Value.first) ^ hash<V>()(Value.second);
 		}
 	};
 
@@ -24,6 +25,16 @@ namespace std
 				result ^= hash<T>()(item);
 			}
 			return result;
+		}
+	};
+
+	template<typename T>
+	struct hash<Optional<T>>
+	{
+		size_t operator()(const Optional<T>& Value)
+		{
+			if (!Value.HasValue) return 0;
+			else return hash<T>()(Value.Value);
 		}
 	};
 }

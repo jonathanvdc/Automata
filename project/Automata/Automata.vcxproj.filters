@@ -63,22 +63,10 @@
     <ClInclude Include="Optional.hxx">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Pair.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Pair.hxx">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TransitionTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TransitionTable.hxx">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UnorderedMapFunction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UnorderedMapFunction.hxx">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ArraySlice.h">

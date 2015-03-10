@@ -1,7 +1,7 @@
 public struct Optional<T>
 {
     public const this(set T Value) { HasValue = true; }
-    public const this();
+    public const this() { HasValue = false; }
     
     public bool HasValue;
     public T Value;

@@ -41,4 +41,6 @@ Optional<T>::Optional(T Value)
 
 template<typename T>
 Optional<T>::Optional()
-{ }
+{
+    this->HasValue = false;
+}

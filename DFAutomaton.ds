@@ -7,16 +7,16 @@ namespace Automata
     /// </summary>
     public struct DFAutomaton<TState, TChar> : IAutomaton<TChar>
     {
-        public const this(set TState StartState, set LinearSet<TState> AcceptingStates, set TransitionTable<Pair<TState, TChar>, TState> TransitionFunction);
+        public const this(set TState StartState, set LinearSet<TState> AcceptingStates, set TransitionTable<pair<TState, TChar>, TState> TransitionFunction);
         
         public TState StartState { const get; private set; }
         public LinearSet<TState> AcceptingStates { const get; private set; }
-        public TransitionTable<Pair<TState, TChar>, TState> TransitionFunction { const get; private set; }
+        public TransitionTable<pair<TState, TChar>, TState> TransitionFunction { const get; private set; }
         
         public const TState PerformTransition(TState State, TChar Character)
         {
             var transFun = TransitionFunction;
-            return transFun.Apply(new Pair<TState, TChar>(State, Character));
+            return transFun.Apply(new pair<TState, TChar>(State, Character));
         }
         public const TState PerformExtendedTransition(TState State, TChar[] Characters)
         {
@@ -38,13 +38,36 @@ namespace Automata
                 newAccept.Add(StateRenamer->Apply(item));
             }
             var currentTransFun = TransitionFunction;
-            var newTransMap = new unordered_map<Pair<TNState, TNChar>, TNState>();
+            var newTransMap = new unordered_map<pair<TNState, TNChar>, TNState>();
             foreach (var item in currentTransFun.Map)
             {
-                newTransMap[new Pair<TNState, TNChar>(StateRenamer->Apply(item.first.First), CharRenamer->Apply(item.first.Second))] = StateRenamer->Apply(item.second);
+                newTransMap[new pair<TNState, TNChar>(StateRenamer->Apply(item.first.first), CharRenamer->Apply(item.first.second))] = StateRenamer->Apply(item.second);
             }
-            var transFun = new TransitionTable<Pair<TNState, TNChar>, TNState>(newTransMap);
+            var transFun = new TransitionTable<pair<TNState, TNChar>, TNState>(newTransMap);
             return new DFAutomaton<TNState, TNChar>(newStart, newAccept, transFun);
+        }
+        
+        public const LinearSet<TState> GetStates()
+        {
+            LinearSet<TState> results = new LinearSet<TState>();
+            var transfunc = TransitionFunction;
+            foreach (var item in transfunc.Map)
+            {
+                results.Add(item.first.first);
+                results.Add(item.second);
+            }
+            return results;
+        }
+        
+        public const LinearSet<TChar> GetAlphabet()
+        {
+            LinearSet<TChar> results = new LinearSet<TChar>();
+            var transfunc = TransitionFunction;
+            foreach (var item in transfunc.Map)
+            {
+                results.Add(item.first.second);
+            }
+            return results;
         }
         
         public const bool IsAcceptingState(TState State)

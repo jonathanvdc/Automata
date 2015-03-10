@@ -1,8 +1,8 @@
 #pragma once
+#include <utility>
 #include <unordered_map>
 #include "LinearSet.h"
 #include "TransitionTable.h"
-#include "Pair.h"
 #include "ArraySlice.h"
 #include "DFAutomaton.h"
 #include "IAutomaton.h"
@@ -14,7 +14,7 @@ namespace Automata
     class NFAutomaton : public IAutomaton<TChar>
     {
     public:
-        NFAutomaton(TState StartState, LinearSet<TState> AcceptingStates, TransitionTable<Pair<TState, TChar>, LinearSet<TState>> TransitionFunction);
+        NFAutomaton(TState StartState, LinearSet<TState> AcceptingStates, TransitionTable<std::pair<TState, TChar>, LinearSet<TState>> TransitionFunction);
 
         LinearSet<TState> PerformTransition(TState State, TChar Character) const;
 
@@ -27,11 +27,15 @@ namespace Automata
         /// \brief Gets a boolean value that indicates whether the automaton accepts the given string.
         bool Accepts(stdx::ArraySlice<TChar> Characters) const override;
 
-        /// \brief Performs the subset construction based on the given alphabet.
-        DFAutomaton<LinearSet<TState>, TChar> ToDFAutomaton(LinearSet<TChar> Alphabet) const;
+        LinearSet<TState> GetStates() const;
 
-        TransitionTable<Pair<TState, TChar>, LinearSet<TState>> getTransitionFunction() const;
-        void setTransitionFunction(TransitionTable<Pair<TState, TChar>, LinearSet<TState>> value);
+        LinearSet<TChar> GetAlphabet() const;
+
+        /// \brief Performs the subset construction on this automaton.
+        DFAutomaton<LinearSet<TState>, TChar> ToDFAutomaton() const;
+
+        TransitionTable<std::pair<TState, TChar>, LinearSet<TState>> getTransitionFunction() const;
+        void setTransitionFunction(TransitionTable<std::pair<TState, TChar>, LinearSet<TState>> value);
 
         LinearSet<TState> getAcceptingStates() const;
         void setAcceptingStates(LinearSet<TState> value);
@@ -39,9 +43,12 @@ namespace Automata
         TState getStartState() const;
         void setStartState(TState value);
     private:
+        /// \brief Performs the subset construction based on the given alphabet.
+        DFAutomaton<LinearSet<TState>, TChar> ToDFAutomaton(LinearSet<TChar> Alphabet) const;
+
         TState StartState_value;
         LinearSet<TState> AcceptingStates_value;
-        TransitionTable<Pair<TState, TChar>, LinearSet<TState>> TransitionFunction_value;
+        TransitionTable<std::pair<TState, TChar>, LinearSet<TState>> TransitionFunction_value;
     };
 }
 

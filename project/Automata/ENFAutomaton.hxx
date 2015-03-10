@@ -1,8 +1,10 @@
+#include <utility>
+#include <unordered_map>
 #include "LinearSet.h"
 #include "TransitionTable.h"
-#include "Pair.h"
 #include "Optional.h"
 #include "ArraySlice.h"
+#include "DFAutomaton.h"
 #include "IAutomaton.h"
 #include "ENFAutomaton.h"
 
@@ -12,7 +14,7 @@ template<typename TState, typename TChar>
 LinearSet<TState> ENFAutomaton<TState, TChar>::PerformTransition(TState State, Optional<TChar> Character) const
 {
     auto transFun = this->getTransitionFunction();
-    return transFun.Apply(Pair<TState, Optional<TChar>>(State, Character));
+    return transFun.Apply(std::pair<TState, Optional<TChar>>(State, Character));
 }
 
 template<typename TState, typename TChar>
@@ -89,7 +91,80 @@ bool ENFAutomaton<TState, TChar>::Accepts(stdx::ArraySlice<TChar> Characters) co
 }
 
 template<typename TState, typename TChar>
-ENFAutomaton<TState, TChar>::ENFAutomaton(TState StartState, LinearSet<TState> AcceptingStates, TransitionTable<Pair<TState, Optional<TChar>>, LinearSet<TState>> TransitionFunction)
+LinearSet<TState> ENFAutomaton<TState, TChar>::GetStates() const
+{
+    LinearSet<TState> results;
+    auto transfunc = this->getTransitionFunction();
+    for (auto& item : transfunc.getMap())
+    {
+        results.Add(item.first.first);
+        results.AddAll(item.second);
+    }
+    return results;
+}
+
+template<typename TState, typename TChar>
+LinearSet<TChar> ENFAutomaton<TState, TChar>::GetAlphabet() const
+{
+    LinearSet<TChar> results;
+    auto transfunc = this->getTransitionFunction();
+    for (auto& item : transfunc.getMap())
+    {
+        if (item.first.second.HasValue)
+        {
+            results.Add(item.first.second.Value);
+        }
+    }
+    return results;
+}
+
+/// \brief Performs the modified subset construction on this automaton.
+template<typename TState, typename TChar>
+DFAutomaton<LinearSet<TState>, TChar> ENFAutomaton<TState, TChar>::ToDFAutomaton() const
+{
+    return this->ToDFAutomaton(this->GetAlphabet());
+}
+
+/// \brief Performs the modified subset construction based on the given alphabet.
+template<typename TState, typename TChar>
+DFAutomaton<LinearSet<TState>, TChar> ENFAutomaton<TState, TChar>::ToDFAutomaton(LinearSet<TChar> Alphabet) const
+{
+    LinearSet<TState> startState;
+    startState.Add(this->getStartState());
+    std::unordered_map<std::pair<LinearSet<TState>, TChar>, LinearSet<TState>> transMap;
+    LinearSet<LinearSet<TState>> accStates;
+    LinearSet<LinearSet<TState>> processedStates;
+    LinearSet<LinearSet<TState>> nextStates;
+    LinearSet<TState> initialState;
+    initialState.Add(this->getStartState());
+    nextStates.Add(initialState);
+    while (!nextStates.getIsEmpty())
+    {
+        auto last = nextStates.getLast();
+        LinearSet<LinearSet<TState>> accumulatedStates;
+        if (!processedStates.Contains(last))
+        {
+            for (auto& item : Alphabet.getItems())
+            {
+                auto trans = this->Eclose(this->PerformAllTransitions(last, Optional<TChar>(item)));
+                accumulatedStates.Add(trans);
+                transMap[std::pair<LinearSet<TState>, TChar>(last, item)] = trans;
+            }
+            processedStates.Add(last);
+            if (this->ContainsAcceptingState(last))
+            {
+                accStates.Add(last);
+            }
+        }
+        nextStates.RemoveLast();
+        nextStates.AddAll(accumulatedStates);
+    }
+    TransitionTable<std::pair<LinearSet<TState>, TChar>, LinearSet<TState>> transFun(transMap);
+    return DFAutomaton<LinearSet<TState>, TChar>(startState, accStates, transFun);
+}
+
+template<typename TState, typename TChar>
+ENFAutomaton<TState, TChar>::ENFAutomaton(TState StartState, LinearSet<TState> AcceptingStates, TransitionTable<std::pair<TState, Optional<TChar>>, LinearSet<TState>> TransitionFunction)
 {
     this->setStartState(StartState);
     this->setAcceptingStates(AcceptingStates);
@@ -97,12 +172,12 @@ ENFAutomaton<TState, TChar>::ENFAutomaton(TState StartState, LinearSet<TState> A
 }
 
 template<typename TState, typename TChar>
-TransitionTable<Pair<TState, Optional<TChar>>, LinearSet<TState>> ENFAutomaton<TState, TChar>::getTransitionFunction() const
+TransitionTable<std::pair<TState, Optional<TChar>>, LinearSet<TState>> ENFAutomaton<TState, TChar>::getTransitionFunction() const
 {
     return this->TransitionFunction_value;
 }
 template<typename TState, typename TChar>
-void ENFAutomaton<TState, TChar>::setTransitionFunction(TransitionTable<Pair<TState, Optional<TChar>>, LinearSet<TState>> value)
+void ENFAutomaton<TState, TChar>::setTransitionFunction(TransitionTable<std::pair<TState, Optional<TChar>>, LinearSet<TState>> value)
 {
     this->TransitionFunction_value = value;
 }

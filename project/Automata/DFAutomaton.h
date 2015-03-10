@@ -1,9 +1,8 @@
 #pragma once
-#include <unordered_map>
 #include <utility>
+#include <unordered_map>
 #include "LinearSet.h"
 #include "TransitionTable.h"
-#include "Pair.h"
 #include "ArraySlice.h"
 #include "IFunction.h"
 #include "IAutomaton.h"
@@ -15,7 +14,7 @@ namespace Automata
     class DFAutomaton : public IAutomaton<TChar>
     {
     public:
-        DFAutomaton(TState StartState, LinearSet<TState> AcceptingStates, TransitionTable<Pair<TState, TChar>, TState> TransitionFunction);
+        DFAutomaton(TState StartState, LinearSet<TState> AcceptingStates, TransitionTable<std::pair<TState, TChar>, TState> TransitionFunction);
 
         TState PerformTransition(TState State, TChar Character) const;
 
@@ -32,22 +31,26 @@ namespace Automata
                 newAccept.Add(StateRenamer->Apply(item));
             }
             auto currentTransFun = this->getTransitionFunction();
-            std::unordered_map<Pair<TNState, TNChar>, TNState> newTransMap;
+            std::unordered_map<std::pair<TNState, TNChar>, TNState> newTransMap;
             for (auto& item0 : currentTransFun.getMap())
             {
-                newTransMap[Pair<TNState, TNChar>(StateRenamer->Apply(item0.first.getFirst()), CharRenamer->Apply(item0.first.getSecond()))] = StateRenamer->Apply(item0.second);
+                newTransMap[std::pair<TNState, TNChar>(StateRenamer->Apply(item0.first.first), CharRenamer->Apply(item0.first.second))] = StateRenamer->Apply(item0.second);
             }
-            TransitionTable<Pair<TNState, TNChar>, TNState> transFun(newTransMap);
+            TransitionTable<std::pair<TNState, TNChar>, TNState> transFun(newTransMap);
             return DFAutomaton<TNState, TNChar>(newStart, newAccept, transFun);
         }
+
+        LinearSet<TState> GetStates() const;
+
+        LinearSet<TChar> GetAlphabet() const;
 
         bool IsAcceptingState(TState State) const;
 
         /// \brief Gets a boolean value that indicates whether the automaton accepts the given string.
         bool Accepts(stdx::ArraySlice<TChar> Characters) const override;
 
-        TransitionTable<Pair<TState, TChar>, TState> getTransitionFunction() const;
-        void setTransitionFunction(TransitionTable<Pair<TState, TChar>, TState> value);
+        TransitionTable<std::pair<TState, TChar>, TState> getTransitionFunction() const;
+        void setTransitionFunction(TransitionTable<std::pair<TState, TChar>, TState> value);
 
         TState getStartState() const;
         void setStartState(TState value);
@@ -57,7 +60,7 @@ namespace Automata
     private:
         TState StartState_value;
         LinearSet<TState> AcceptingStates_value;
-        TransitionTable<Pair<TState, TChar>, TState> TransitionFunction_value;
+        TransitionTable<std::pair<TState, TChar>, TState> TransitionFunction_value;
     };
 }
 

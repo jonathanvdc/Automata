@@ -11,9 +11,7 @@
   <ItemGroup>
     <Compile Include="DFAutomaton.ds" />
     <Compile Include="IAutomaton.ds" />
-    <Compile Include="Pair.ds" />
     <Compile Include="IFunction.ds" />
-    <Compile Include="UnorderedMapFunction.ds" />
     <Compile Include="NFAutomaton.ds" />
     <Compile Include="LinearSet.ds" />
     <Compile Include="TransitionTable.ds" />

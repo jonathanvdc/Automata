@@ -1,5 +1,6 @@
 #include "AutomatonParser.h"
 #include "HashExtensions.h"
+#include <utility>
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -55,9 +56,13 @@ AutomatonParser::Automaton AutomatonParser::ReadAutomaton(std::istream& Input)
 	{
 		return std::make_unique<DFA>(ReadDFAutomaton(Input));
 	}
-	else
+	else if (type == NonDeterministic)
 	{
 		return std::make_unique<NFA>(ReadNFAutomaton(Input));
+	}
+	else
+	{
+		return std::make_unique<ENFA>(ReadENFAutomaton(Input));
 	}
 }
 
@@ -68,7 +73,7 @@ AutomatonParser::DFA AutomatonParser::ReadDFAutomaton(std::istream& Input)
 
 	State initial;
 	LinearSet<State> finalStates;
-	std::unordered_map<Pair<State, Symbol>, State> trans;
+	std::unordered_map<std::pair<State, Symbol>, State> trans;
 
 	while (word.size() > 0 && Input)
 	{
@@ -89,7 +94,7 @@ AutomatonParser::DFA AutomatonParser::ReadDFAutomaton(std::istream& Input)
 				State b;
 				Symbol c;
 				Input >> c >> b;
-				trans[Pair<State, Symbol>(a, c)] = b;
+				trans[std::pair<State, Symbol>(a, c)] = b;
 				Input >> a;
 			}
 		}
@@ -100,7 +105,7 @@ AutomatonParser::DFA AutomatonParser::ReadDFAutomaton(std::istream& Input)
 		Input >> word;
 	}
 
-	return DFA(initial, finalStates, TransitionTable<Pair<State, Symbol>, State>(trans));
+	return DFA(initial, finalStates, TransitionTable<std::pair<State, Symbol>, State>(trans));
 }
 AutomatonParser::NFA AutomatonParser::ReadNFAutomaton(std::istream& Input)
 {
@@ -109,7 +114,7 @@ AutomatonParser::NFA AutomatonParser::ReadNFAutomaton(std::istream& Input)
 
 	State initial;
 	LinearSet<State> finalStates;
-	std::unordered_map<Pair<State, Symbol>, LinearSet<State>> trans;
+	std::unordered_map<std::pair<State, Symbol>, LinearSet<State>> trans;
 
 	while (word.size() > 0 && Input)
 	{
@@ -130,7 +135,7 @@ AutomatonParser::NFA AutomatonParser::ReadNFAutomaton(std::istream& Input)
 				State b;
 				Symbol c;
 				Input >> c >> b;
-				trans[Pair<State, Symbol>(a, c)].Add(b);
+				trans[std::pair<State, Symbol>(a, c)].Add(b);
 				Input >> a;
 			}
 		}
@@ -141,9 +146,78 @@ AutomatonParser::NFA AutomatonParser::ReadNFAutomaton(std::istream& Input)
 		Input >> word;
 	}
 
-	return NFA(initial, finalStates, TransitionTable<Pair<State, Symbol>, LinearSet<State>>(trans));
+	return NFA(initial, finalStates, TransitionTable<std::pair<State, Symbol>, LinearSet<State>>(trans));
+}
+AutomatonParser::ENFA AutomatonParser::ReadENFAutomaton(std::istream& Input)
+{
+	std::string word;
+	Input >> word;
+
+	State initial;
+	LinearSet<State> finalStates;
+	std::unordered_map<std::pair<State, Optional<Symbol>>, LinearSet<State>> trans;
+
+	while (word.size() > 0 && Input)
+	{
+		if (word == "start")
+		{
+			Input >> initial;
+		}
+		else if (word == "accepts")
+		{
+			Input >> finalStates;
+		}
+		else if (word == "transitions")
+		{
+			State a;
+			Input >> a;
+			while (a.size() > 0 && Input)
+			{
+				State b;
+				Symbol c;
+				Input >> c >> b;
+				if (c == "->")
+				{
+					trans[std::pair<State, Optional<Symbol>>(a, Optional<Symbol>())].Add(b);
+				}
+				else
+				{
+					trans[std::pair<State, Optional<Symbol>>(a, Optional<Symbol>(c))].Add(b);
+				}
+				Input >> a;
+			}
+		}
+		else if (word != "enfa")
+		{
+			throw std::invalid_argument("Word '" + word + "' was not recognized while parsing an enfa.");
+		}
+		Input >> word;
+	}
+
+	return ENFA(initial, finalStates, TransitionTable<std::pair<State, Optional<Symbol>>, LinearSet<State>>(trans));
 }
 
+void AutomatonParser::Write(AutomatonParser::ENFA Value, std::ostream& Output)
+{
+	Output << "enfa" << std::endl;
+	Output << "start " << Value.getStartState() << std::endl;
+	Output << "accepts" << Value.getAcceptingStates() << std::endl;
+	Output << "transitions" << std::endl;
+	for (auto& item : Value.getTransitionFunction().getMap())
+	{
+		for (auto& targetState : item.second.getItems())
+		{
+			if (item.first.second.HasValue)
+			{
+				Output << item.first.first << " " << item.first.second.Value << " " << targetState << std::endl;
+			}
+			else
+			{
+				Output << item.first.first << " -> " << targetState << std::endl;
+			}
+		}
+	}
+}
 void AutomatonParser::Write(AutomatonParser::NFA Value, std::ostream& Output)
 {
 	Output << "nfa" << std::endl;
@@ -154,7 +228,7 @@ void AutomatonParser::Write(AutomatonParser::NFA Value, std::ostream& Output)
 	{
 		for (auto& targetState : item.second.getItems())
 		{
-			Output << item.first.getFirst() << " " << item.first.getSecond() << " " << targetState << std::endl;
+			Output << item.first.first << " " << item.first.second << " " << targetState << std::endl;
 		}
 	}
 }
@@ -166,6 +240,6 @@ void AutomatonParser::Write(AutomatonParser::DFA Value, std::ostream& Output)
 	Output << "transitions" << std::endl;
 	for (auto& item : Value.getTransitionFunction().getMap())
 	{
-		Output << item.first.getFirst() << " " << item.first.getSecond() << " " << item.second << std::endl;
+		Output << item.first.first << " " << item.first.second << " " << item.second << std::endl;
 	}
 }
