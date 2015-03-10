@@ -16,6 +16,14 @@ namespace Automata
 		typedef ENFAutomaton<State, Symbol> ENFA;
 		typedef std::unique_ptr<IAutomaton<Symbol>> Automaton;
 
+		enum AutomatonType
+		{
+			Deterministic,
+			NonDeterministic,
+			EpsilonNonDeterministic
+		};
+
+		AutomatonType ReadType(std::istream& Input);
 		Automaton ReadAutomaton(std::istream& Input);
 		DFA ReadDFAutomaton(std::istream& Input);
 		NFA ReadNFAutomaton(std::istream& Input);

@@ -75,13 +75,24 @@ int main(int argc, const char* argv[])
 
 	if (std::string(argv[1]) == "dot")
 	{
-		auto dfa = parser.ReadDFAutomaton(input);
+		auto type = parser.ReadType(input);
 
 		AutomatonDotPrinter printer;
 
 		std::ofstream output(argv[3]);
 
-		printer.Write(dfa, output);
+		if (type == parser.Deterministic)
+		{
+			printer.Write(parser.ReadDFAutomaton(input), output);
+		}
+		else if (type == parser.NonDeterministic)
+		{
+			printer.Write(parser.ReadNFAutomaton(input), output);
+		}
+		else
+		{
+			printer.Write(parser.ReadENFAutomaton(input), output);
+		}
 	}
 	else if (std::string(argv[1]) == "ssc")
 	{

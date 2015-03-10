@@ -9,14 +9,7 @@
 
 using namespace Automata;
 
-enum AutomatonType
-{
-	Deterministic,
-	NonDeterministic,
-	EpsilonNonDeterministic
-};
-
-AutomatonType ReadType(std::istream& Input)
+AutomatonParser::AutomatonType AutomatonParser::ReadType(std::istream& Input)
 {
 	std::string val;
 	Input >> val;
