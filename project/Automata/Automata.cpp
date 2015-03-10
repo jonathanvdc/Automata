@@ -65,6 +65,12 @@ int main(int argc, const char* argv[])
 
 	std::ifstream input(argv[2]);
 
+	if (!input)
+	{
+		std::cout << "Input file '" << argv[2] << "' could not be opened." << std::endl;
+		return 0;
+	}
+
 	if (std::string(argv[1]) == "ssc")
 	{
 		auto nfa = parser.ReadNFAutomaton(input);
