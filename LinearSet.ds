@@ -11,6 +11,10 @@ public struct LinearSet<T>
     {
         this.vals = (vector<T>)Values;
     }
+    public const this(initializer_list<T> Values)
+    {
+        this.vals = new vector<T>(Values);
+    }
     
     private vector<T> vals;
     

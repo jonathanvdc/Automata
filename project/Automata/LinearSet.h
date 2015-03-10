@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <initializer_list>
 #include "ArraySlice.h"
 
 template<typename T>
@@ -9,6 +10,7 @@ public:
     LinearSet();
     LinearSet(std::vector<T> Values);
     LinearSet(stdx::ArraySlice<T> Values);
+    LinearSet(std::initializer_list<T> Values);
 
     bool Contains(T Value) const;
 

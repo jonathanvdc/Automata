@@ -34,7 +34,7 @@ int main(int argc, const char* argv[])
 
 	input.close();
 
-	auto dfa = nfa.ToDFAutomaton(LinearSet<std::string>(std::vector<Symbol>({ "0", "1" })));
+	auto dfa = nfa.ToDFAutomaton(LinearSet<std::string>({ "0", "1" }));
 
 	for (size_t i = 0; i < 25; i++)
 	{

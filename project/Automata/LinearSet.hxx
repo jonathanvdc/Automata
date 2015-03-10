@@ -1,4 +1,5 @@
 #include <vector>
+#include <initializer_list>
 #include "ArraySlice.h"
 #include "LinearSet.h"
 
@@ -105,6 +106,12 @@ template<typename T>
 LinearSet<T>::LinearSet(stdx::ArraySlice<T> Values)
 {
     this->vals = (std::vector<T>)Values;
+}
+
+template<typename T>
+LinearSet<T>::LinearSet(std::initializer_list<T> Values)
+{
+    this->vals = std::vector<T>(Values);
 }
 
 template<typename T>

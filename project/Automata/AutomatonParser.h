@@ -1,8 +1,8 @@
 #pragma once
 #include <memory>
 #include <iostream>
-#include "..\..\bin\NFAutomaton.h"
-#include "..\..\bin\DFAutomaton.h"
+#include "NFAutomaton.h"
+#include "DFAutomaton.h"
 
 namespace Automata
 {
