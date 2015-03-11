@@ -118,16 +118,13 @@ namespace Automata
         /// </summary>
         private const DFAutomaton<LinearSet<TState>, TChar> ToDFAutomaton(LinearSet<TChar> Alphabet)
         {
-            var startState = new LinearSet<TState>();
-            startState.Add(StartState);
+            var startState = Eclose(StartState);
             var transMap = new unordered_map<pair<LinearSet<TState>, TChar>, LinearSet<TState>>();
             var accStates = new LinearSet<LinearSet<TState>>();
             
             var processedStates = new LinearSet<LinearSet<TState>>();
             var nextStates = new LinearSet<LinearSet<TState>>();
-            var initialState = new LinearSet<TState>();
-            initialState.Add(StartState);
-            nextStates.Add(initialState);
+            nextStates.Add(startState);
             
             while (!nextStates.IsEmpty)
             {

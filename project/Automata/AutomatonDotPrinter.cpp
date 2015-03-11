@@ -89,7 +89,7 @@ void AutomatonDotPrinter::Write(AutomatonDotPrinter::ENFA Value, std::ostream& O
 	for (auto& p : Value.getTransitionFunction().getMap())
 	{
 		State from = p.first.first;
-		std::string sym = p.first.second.HasValue ? p.first.second.Value : "epsilon";
+		std::string sym = p.first.second.HasValue ? p.first.second.Value : "&epsilon;";
 		for (auto& to : p.second.getItems())
 		{
 			Output << "    \"" << from << "\" -> \"" << to

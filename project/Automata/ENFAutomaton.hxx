@@ -129,15 +129,12 @@ DFAutomaton<LinearSet<TState>, TChar> ENFAutomaton<TState, TChar>::ToDFAutomaton
 template<typename TState, typename TChar>
 DFAutomaton<LinearSet<TState>, TChar> ENFAutomaton<TState, TChar>::ToDFAutomaton(LinearSet<TChar> Alphabet) const
 {
-    LinearSet<TState> startState;
-    startState.Add(this->getStartState());
+    auto startState = this->Eclose(this->getStartState());
     std::unordered_map<std::pair<LinearSet<TState>, TChar>, LinearSet<TState>> transMap;
     LinearSet<LinearSet<TState>> accStates;
     LinearSet<LinearSet<TState>> processedStates;
     LinearSet<LinearSet<TState>> nextStates;
-    LinearSet<TState> initialState;
-    initialState.Add(this->getStartState());
-    nextStates.Add(initialState);
+    nextStates.Add(startState);
     while (!nextStates.getIsEmpty())
     {
         auto last = nextStates.getLast();
