@@ -20,12 +20,16 @@ std::shared_ptr<IRegex> RegexParser::ParseSimpleRegex(char val)
 
 std::shared_ptr<IRegex> RegexParser::ParseRegex(char val)
 {
+	std::shared_ptr<IRegex> first;
+
 	if (val == '(')
 	{
-		return ParseRegex(); // RParen has been parsed, ParseRegex will take care of LParen
+		first = ParseRegex(); // RParen has been parsed, ParseRegex will take care of LParen
 	}
-
-	auto first = ParseSimpleRegex(val);
+	else
+	{
+		first = ParseSimpleRegex(val);
+	}
 
 	*this->data >> val;
 
@@ -33,8 +37,11 @@ std::shared_ptr<IRegex> RegexParser::ParseRegex(char val)
 
 	if (val == '*')
 	{
+		auto closure = std::make_shared<ClosureRegex>(first);
 		*this->data >> val;
-		return std::make_shared<ClosureRegex>(first);
+		if (!*this->data) { return closure; }
+		auto next = ParseRegex(val);
+		return std::make_shared<ConcatRegex>(closure, next);
 	}
 	else if (val == '+')
 	{
