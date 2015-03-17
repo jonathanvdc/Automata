@@ -33,11 +33,12 @@ std::shared_ptr<IRegex> RegexParser::ParseRegex(char val)
 
 	if (val == '*')
 	{
+		*this->data >> val;
 		return std::make_shared<ClosureRegex>(first);
 	}
 	else if (val == '+')
 	{
-		auto second = ParseRegex(val);
+		auto second = ParseRegex();
 		return std::make_shared<UnionRegex>(first, second);
 	}
 	else if (val != ')')
