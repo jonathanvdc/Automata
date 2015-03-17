@@ -2,6 +2,7 @@
 #include <string>
 #include <utility>
 #include "IRegex.h"
+#include "UnionRegex.h"
 #include "IsInstance.h"
 #include "ENFAutomaton.h"
 #include "RegexState.h"
@@ -9,7 +10,6 @@
 #include "Optional.h"
 #include "LinearSet.h"
 #include "ConcatRegex.h"
-#include "UnionRegex.h"
 #include "HashExtensions.h"
 
 using namespace Automata;
@@ -20,7 +20,7 @@ std::string ConcatRegex::ToString() const
     if (stdx::isinstance<UnionRegex>(this->Left))
         result = "(" + this->Left->ToString() + ")";
     else
-        std::string result = this->Left->ToString();
+        result = this->Left->ToString();
 
     if (stdx::isinstance<UnionRegex>(this->Right))
         result += "(" + this->Right->ToString() + ")";

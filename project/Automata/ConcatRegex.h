@@ -3,6 +3,7 @@
 #include <string>
 #include <utility>
 #include "IRegex.h"
+#include "UnionRegex.h"
 #include "IsInstance.h"
 #include "ENFAutomaton.h"
 #include "RegexState.h"

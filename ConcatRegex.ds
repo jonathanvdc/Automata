@@ -11,7 +11,7 @@ namespace Automata
         
         public const string ToString()
         {
-            string result;
+            string result = default(string);
             if (Left is UnionRegex)
             {
                 result = "(" + Left.ToString() + ")";
