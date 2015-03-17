@@ -18,6 +18,7 @@
 #include "HashExtensions.h"
 #include "LambdaFunction.h"
 #include "AutomatonDotPrinter.h"
+#include "RegexParser.h"
 
 typedef std::string State;
 typedef std::string Symbol;
@@ -45,6 +46,16 @@ State NameSets(LinearSet<State> vals)
 	return result.str();
 }
 
+State NameRegexState(std::shared_ptr<RegexState> State, std::unordered_map<std::shared_ptr<RegexState>, int>& Named)
+{
+	auto iter = Named.find(State);
+	if (Named.end() == iter) // Key not in dict
+	{
+		Named[State] = Named.size();
+	}
+	return std::to_string(Named[State]);
+}
+
 template<typename T>
 T id(T Value)
 {
@@ -60,6 +71,7 @@ int main(int argc, const char* argv[])
 		std::cout << " * mssc <input file>.enfa <output file>.dfa (e-NFA->DFA conversion)" << std::endl;
 		std::cout << " * accepts <input file> <string> (test a string)" << std::endl;
 		std::cout << " * dot <input file>.dfa <target file>.dot (gets a dot language representation)" << std::endl;
+		std::cout << " * re2enfa <input file>.re <target file>.enfa (regex->e-NFA conversion)" << std::endl;
 		return 0;
 	}
 
@@ -125,6 +137,27 @@ int main(int argc, const char* argv[])
 		std::ofstream output(argv[3]);
 
 		parser.Write(renamedDfa, output);
+
+		output.close();
+	}
+	else if (std::string(argv[1]) == "re2enfa")
+	{
+		RegexParser regexParser(input);
+
+		auto regex = regexParser.ParseRegex();
+		input.close();
+		
+		auto enfa = regex->ToENFAutomaton();
+
+		std::unordered_map<std::shared_ptr<RegexState>, int> names;
+		auto setRenamer = Automata::LambdaFunction<std::shared_ptr<RegexState>, State>([&](std::shared_ptr<RegexState> state) { return NameRegexState(state, names); });
+		auto charRenamer = Automata::LambdaFunction<Symbol, Symbol>(id<Symbol>);
+
+		auto renamedEnfa = enfa.Rename<State, Symbol>(&setRenamer, &charRenamer);
+
+		std::ofstream output(argv[3]);
+
+		parser.Write(renamedEnfa, output);
 
 		output.close();
 	}

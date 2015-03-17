@@ -4,6 +4,7 @@
 #include "LinearSet.h"
 #include "TransitionTable.h"
 #include "Optional.h"
+#include "IFunction.h"
 #include "ArraySlice.h"
 #include "DFAutomaton.h"
 #include "IAutomaton.h"
@@ -39,20 +40,53 @@ namespace Automata
         /// \brief Performs the modified subset construction on this automaton.
         DFAutomaton<LinearSet<TState>, TChar> ToDFAutomaton() const;
 
-        TransitionTable<std::pair<TState, Optional<TChar>>, LinearSet<TState>> getTransitionFunction() const;
+        TState getStartState() const;
 
         LinearSet<TState> getAcceptingStates() const;
 
-        TState getStartState() const;
+        TransitionTable<std::pair<TState, Optional<TChar>>, LinearSet<TState>> getTransitionFunction() const;
+
+		template<typename TNState, typename TNChar>
+		ENFAutomaton<TNState, TNChar> Rename(const IFunction<TState, TNState>* StateRenamer, const IFunction<TChar, TNChar>* CharRenamer) const
+		{
+			auto newStart = StateRenamer->Apply(this->getStartState());
+			LinearSet<TNState> newAccept;
+			auto oldAccept = this->getAcceptingStates();
+			for (auto& val : oldAccept.getItems())
+			{
+				newAccept.Add(StateRenamer->Apply(val));
+			}
+			auto currentTransFun = this->getTransitionFunction();
+			std::unordered_map<std::pair<TNState, Optional<TNChar>>, LinearSet<TNState>> newTransMap;
+			for (auto& item : currentTransFun.getMap())
+			{
+				auto renamedOriginState = StateRenamer->Apply(item.first.first);
+				LinearSet<TNState> renamedTargetStates;
+				for (auto& val : item.second.getItems())
+				{
+					renamedTargetStates.Add(StateRenamer->Apply(val));
+				}
+				if (item.first.second.HasValue)
+				{
+					newTransMap[std::pair<TNState, Optional<TNChar>>(renamedOriginState, Optional<TNChar>(CharRenamer->Apply(item.first.second.Value)))] = renamedTargetStates;
+				}
+				else
+				{
+					newTransMap[std::pair<TNState, Optional<TNChar>>(renamedOriginState, Optional<TNChar>())] = renamedTargetStates;
+				}
+			}
+			TransitionTable<std::pair<TNState, Optional<TNChar>>, LinearSet<TNState>> transFun(newTransMap);
+			return ENFAutomaton<TNState, TNChar>(newStart, newAccept, transFun);
+		}
     private:
         /// \brief Performs the modified subset construction based on the given alphabet.
         DFAutomaton<LinearSet<TState>, TChar> ToDFAutomaton(LinearSet<TChar> Alphabet) const;
 
-        void setTransitionFunction(TransitionTable<std::pair<TState, Optional<TChar>>, LinearSet<TState>> value);
+        void setStartState(TState value);
 
         void setAcceptingStates(LinearSet<TState> value);
 
-        void setStartState(TState value);
+        void setTransitionFunction(TransitionTable<std::pair<TState, Optional<TChar>>, LinearSet<TState>> value);
 
         TState StartState_value;
         LinearSet<TState> AcceptingStates_value;

@@ -14,11 +14,10 @@ class RegexParser
 public:
 	RegexParser(std::istream& Input) : data(&Input) { }
 
-	std::unique_ptr<IRegex> ParseRegex();
+	std::shared_ptr<IRegex> ParseRegex();
 
 private:
 	std::istream* data;
-	static int GetPrecedence(char Operator);
-	static bool IsOperator(char Value) { return GetPrecedence(Value) > 0; }
-	std::unique_ptr<IRegex> ParseSimpleRegex();
+	std::shared_ptr<IRegex> ParseSimpleRegex(char Value);
+	std::shared_ptr<IRegex> ParseRegex(char Value);
 };

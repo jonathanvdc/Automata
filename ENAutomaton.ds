@@ -13,6 +13,34 @@ namespace Automata
         public LinearSet<TState> AcceptingStates { const get; private set; }
         public TransitionTable<pair<TState, Optional<TChar>>, LinearSet<TState>> TransitionFunction { const get; private set; }
         
+        public const ENFAutomaton<TNState, TNChar> Rename<TNState, TNChar>(IFunction<TState, TNState>* StateRenamer, IFunction<TChar, TNChar>* CharRenamer)
+        {
+            TNState newStart = StateRenamer->Apply(StartState);
+            LinearSet<TNState> newAccept = new LinearSet<TNState>();
+            var oldAccept = AcceptingStates;
+            foreach (var val in oldAccept.Items)
+            {
+                newAccept.Add(StateRenamer->Apply(val));
+            }
+            var currentTransFun = TransitionFunction;
+            var newTransMap = new unordered_map<pair<TNState, Optional<TNChar>>, LinearSet<TNState>>();
+            foreach (var item in currentTransFun.Map)
+            {
+                var renamedOriginState = StateRenamer->Apply(item.first.first);
+                var renamedTargetStates = new LinearSet<TNState>();
+                foreach (var state in item.second.Items)
+                {
+                    renamedTargetStates.Add(StateRenamer->Apply(state));
+                }
+                if (item.first.second.HasValue)
+                    newTransMap[new pair<TNState, Optional<TNChar>>(renamedOriginState, new Optional<TNChar>(CharRenamer->Apply(item.first.second.Value)))] = renamedTargetStates;
+                else
+                    newTransMap[new pair<TNState, Optional<TNChar>>(renamedOriginState, new Optional<TNChar>())] = renamedTargetStates;
+            }
+            var transFun = new TransitionTable<pair<TNState, Optional<TNChar>>, LinearSet<TNState>>(newTransMap);
+            return new ENFAutomaton<TNState, TNChar>(newStart, newAccept, transFun);
+        }
+
         public const LinearSet<TState> PerformTransition(TState State, Optional<TChar> Character)
         {
             var transFun = TransitionFunction;
