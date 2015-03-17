@@ -50,14 +50,17 @@ namespace Automata
         bool Accepts(stdx::ArraySlice<TChar> Characters) const override;
 
         TransitionTable<std::pair<TState, TChar>, TState> getTransitionFunction() const;
-        void setTransitionFunction(TransitionTable<std::pair<TState, TChar>, TState> value);
 
         TState getStartState() const;
-        void setStartState(TState value);
 
         LinearSet<TState> getAcceptingStates() const;
-        void setAcceptingStates(LinearSet<TState> value);
     private:
+        void setTransitionFunction(TransitionTable<std::pair<TState, TChar>, TState> value);
+
+        void setStartState(TState value);
+
+        void setAcceptingStates(LinearSet<TState> value);
+
         TState StartState_value;
         LinearSet<TState> AcceptingStates_value;
         TransitionTable<std::pair<TState, TChar>, TState> TransitionFunction_value;

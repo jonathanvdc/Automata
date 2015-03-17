@@ -2,6 +2,7 @@
 #include <utility>
 #include "LinearSet.h"
 #include "Optional.h"
+#include "RegexState.h"
 
 namespace std
 {
@@ -35,6 +36,15 @@ namespace std
 		{
 			if (!Value.HasValue) return 0;
 			else return hash<T>()(Value.Value);
+		}
+	};
+
+	template<>
+	struct hash<std::shared_ptr<RegexState>>
+	{
+		size_t operator()(const std::shared_ptr<RegexState>& Value)
+		{
+			return (size_t)Value.get();
 		}
 	};
 }

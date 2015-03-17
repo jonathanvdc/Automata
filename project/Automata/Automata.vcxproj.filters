@@ -75,6 +75,30 @@
     <ClInclude Include="AutomatonDotPrinter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LiteralRegex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RegexState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IRegex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EpsilonRegex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PhiRegex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UnionRegex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConcatRegex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClosureRegex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Automata.cpp">
@@ -84,6 +108,27 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AutomatonDotPrinter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RegexState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LiteralRegex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EpsilonRegex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PhiRegex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UnionRegex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConcatRegex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ClosureRegex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

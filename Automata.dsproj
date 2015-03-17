@@ -17,5 +17,9 @@
     <Compile Include="TransitionTable.ds" />
     <Compile Include="Optional.ds" />
     <Compile Include="ENAutomaton.ds" />
+    <Compile Include="Regex.ds" />
+    <Compile Include="UnionRegex.ds" />
+    <Compile Include="ConcatRegex.ds" />
+    <Compile Include="ClosureRegex.ds" />
   </ItemGroup>
 </Project>

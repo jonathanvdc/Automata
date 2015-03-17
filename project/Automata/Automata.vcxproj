@@ -15,27 +15,42 @@
     <ClInclude Include="ArraySlice.hxx" />
     <ClInclude Include="AutomatonDotPrinter.h" />
     <ClInclude Include="AutomatonParser.h" />
+    <ClInclude Include="ClosureRegex.h" />
+    <ClInclude Include="ConcatRegex.h" />
     <ClInclude Include="DFAutomaton.h" />
     <ClInclude Include="DFAutomaton.hxx" />
     <ClInclude Include="ENFAutomaton.h" />
     <ClInclude Include="ENFAutomaton.hxx" />
+    <ClInclude Include="EpsilonRegex.h" />
     <ClInclude Include="HashExtensions.h" />
     <ClInclude Include="IAutomaton.h" />
     <ClInclude Include="IFunction.h" />
+    <ClInclude Include="IRegex.h" />
     <ClInclude Include="LambdaFunction.h" />
     <ClInclude Include="LinearSet.h" />
     <ClInclude Include="LinearSet.hxx" />
+    <ClInclude Include="LiteralRegex.h" />
     <ClInclude Include="NFAutomaton.h" />
     <ClInclude Include="NFAutomaton.hxx" />
     <ClInclude Include="Optional.h" />
     <ClInclude Include="Optional.hxx" />
+    <ClInclude Include="PhiRegex.h" />
+    <ClInclude Include="RegexState.h" />
     <ClInclude Include="TransitionTable.h" />
     <ClInclude Include="TransitionTable.hxx" />
+    <ClInclude Include="UnionRegex.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Automata.cpp" />
     <ClCompile Include="AutomatonDotPrinter.cpp" />
     <ClCompile Include="AutomatonParser.cpp" />
+    <ClCompile Include="ClosureRegex.cpp" />
+    <ClCompile Include="ConcatRegex.cpp" />
+    <ClCompile Include="EpsilonRegex.cpp" />
+    <ClCompile Include="LiteralRegex.cpp" />
+    <ClCompile Include="PhiRegex.cpp" />
+    <ClCompile Include="RegexState.cpp" />
+    <ClCompile Include="UnionRegex.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C1D8A6C6-0EE0-4CE9-A4DC-2C9A73AA631C}</ProjectGuid>

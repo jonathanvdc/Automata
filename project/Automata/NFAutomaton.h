@@ -35,16 +35,19 @@ namespace Automata
         DFAutomaton<LinearSet<TState>, TChar> ToDFAutomaton() const;
 
         TransitionTable<std::pair<TState, TChar>, LinearSet<TState>> getTransitionFunction() const;
-        void setTransitionFunction(TransitionTable<std::pair<TState, TChar>, LinearSet<TState>> value);
 
         LinearSet<TState> getAcceptingStates() const;
-        void setAcceptingStates(LinearSet<TState> value);
 
         TState getStartState() const;
-        void setStartState(TState value);
     private:
         /// \brief Performs the subset construction based on the given alphabet.
         DFAutomaton<LinearSet<TState>, TChar> ToDFAutomaton(LinearSet<TChar> Alphabet) const;
+
+        void setTransitionFunction(TransitionTable<std::pair<TState, TChar>, LinearSet<TState>> value);
+
+        void setAcceptingStates(LinearSet<TState> value);
+
+        void setStartState(TState value);
 
         TState StartState_value;
         LinearSet<TState> AcceptingStates_value;

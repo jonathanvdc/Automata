@@ -1,4 +1,5 @@
 #include <unordered_map>
+#include <utility>
 #include "IFunction.h"
 #include "TransitionTable.h"
 
@@ -15,6 +16,25 @@ template<typename TSource, typename TTarget>
 TransitionTable<TSource, TTarget>::TransitionTable(std::unordered_map<TSource, TTarget> Map)
 {
     this->setMap(Map);
+}
+
+template<typename TSource, typename TTarget>
+void TransitionTable<TSource, TTarget>::Add(TSource Source, TTarget Target)
+{
+    this->getMap()[Source] = Target;
+}
+
+template<typename TSource, typename TTarget>
+void TransitionTable<TSource, TTarget>::Add(std::unordered_map<TSource, TTarget> Transitions)
+{
+    for (auto& item : Transitions)
+        this->Add(item.first, item.second);
+}
+
+template<typename TSource, typename TTarget>
+void TransitionTable<TSource, TTarget>::Add(TransitionTable<TSource, TTarget> Transitions)
+{
+    this->Add(Transitions.getMap());
 }
 
 template<typename TSource, typename TTarget>
