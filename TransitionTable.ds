@@ -8,13 +8,14 @@ namespace Automata
     public struct TransitionTable<TSource, TTarget> : IFunction<TSource, TTarget>
     {
         public const this();
-        public const this(set unordered_map<TSource, TTarget> Map);
+        public const this(set unordered_map<TSource, TTarget> table);
         
-        public unordered_map<TSource, TTarget> Map { const get; private set; }
+        private unordered_map<TSource, TTarget> table;
+        public unordered_map<TSource, TTarget> Map { const get return table; }
         
         public void Add(TSource Source, TTarget Target)
         {
-            Map[Source] = Target;
+            table[Source] = Target;
         }
         
         public void Add(unordered_map<TSource, TTarget> Transitions)

@@ -10,7 +10,7 @@ namespace Automata
     class TransitionTable : public IFunction<TSource, TTarget>
     {
     public:
-        TransitionTable(std::unordered_map<TSource, TTarget> Map);
+        TransitionTable(std::unordered_map<TSource, TTarget> table);
         TransitionTable();
 
         /// \brief Applies the function to the given value.
@@ -24,9 +24,7 @@ namespace Automata
 
         std::unordered_map<TSource, TTarget> getMap() const;
     private:
-        void setMap(std::unordered_map<TSource, TTarget> value);
-
-        std::unordered_map<TSource, TTarget> Map_value;
+        std::unordered_map<TSource, TTarget> table;
     };
 }
 

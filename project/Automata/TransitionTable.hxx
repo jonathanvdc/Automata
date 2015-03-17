@@ -13,15 +13,15 @@ TTarget TransitionTable<TSource, TTarget>::Apply(TSource Value) const
 }
 
 template<typename TSource, typename TTarget>
-TransitionTable<TSource, TTarget>::TransitionTable(std::unordered_map<TSource, TTarget> Map)
+TransitionTable<TSource, TTarget>::TransitionTable(std::unordered_map<TSource, TTarget> table)
 {
-    this->setMap(Map);
+    this->table = table;
 }
 
 template<typename TSource, typename TTarget>
 void TransitionTable<TSource, TTarget>::Add(TSource Source, TTarget Target)
 {
-    this->getMap()[Source] = Target;
+    this->table[Source] = Target;
 }
 
 template<typename TSource, typename TTarget>
@@ -44,10 +44,5 @@ TransitionTable<TSource, TTarget>::TransitionTable()
 template<typename TSource, typename TTarget>
 std::unordered_map<TSource, TTarget> TransitionTable<TSource, TTarget>::getMap() const
 {
-    return this->Map_value;
-}
-template<typename TSource, typename TTarget>
-void TransitionTable<TSource, TTarget>::setMap(std::unordered_map<TSource, TTarget> value)
-{
-    this->Map_value = value;
+    return this->table;
 }

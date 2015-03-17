@@ -30,7 +30,7 @@ ENFAutomaton<std::shared_ptr<RegexState>, std::string> LiteralRegex::ToENFAutoma
     return ENFAutomaton<std::shared_ptr<RegexState>, std::string>(startState, acceptingStates, transTable);
 }
 
-LiteralRegex::LiteralRegex(std::string Literal)
+LiteralRegex::LiteralRegex(std::string Value)
 {
-    this->Literal = Literal;
+	this->Literal = Value;
 }

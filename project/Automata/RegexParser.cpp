@@ -14,7 +14,8 @@ std::shared_ptr<IRegex> RegexParser::ParseSimpleRegex(char val)
 			return std::make_shared<PhiRegex>();
 		}
 	}
-	return std::make_shared<LiteralRegex>(std::string(1, val));
+	auto str = std::string(1, val);
+	return std::make_shared<LiteralRegex>(str);
 }
 
 std::shared_ptr<IRegex> RegexParser::ParseRegex(char val)
@@ -25,9 +26,11 @@ std::shared_ptr<IRegex> RegexParser::ParseRegex(char val)
 	}
 
 	auto first = ParseSimpleRegex(val);
-	if (!this->data) { return first; } // Nec plus ultra
 
 	*this->data >> val;
+
+	if (!*this->data) { return first; } // Nec plus ultra
+
 	if (val == '*')
 	{
 		return std::make_shared<ClosureRegex>(first);

@@ -1,0 +1,11 @@
+enfa
+start 0
+accepts 1
+transitions
+2 a 3
+4 b 5
+7 -> 4
+6 c 1
+3 -> 7
+0 -> 2
+5 -> 6
