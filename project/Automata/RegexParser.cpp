@@ -1,10 +1,13 @@
 #include "RegexParser.h"
+#include <istream>
+
+std::istream& operator>>(std::istream& Stream, char& Target) { Stream.get(Target); return Stream; }
 
 std::shared_ptr<IRegex> RegexParser::ParseSimpleRegex(char val)
 {
 	if (val == '\\')
 	{
-		*this->data >> val;
+		*(this->data) >> val;
 		if (val == 'e')
 		{
 			return std::make_shared<EpsilonRegex>();
@@ -29,11 +32,11 @@ std::shared_ptr<IRegex> RegexParser::ParseRegex(char val)
 
 	*this->data >> val;
 
-	if (!*this->data) { return first; } // Nec plus ultra
+	if (!(*this->data)) { return first; } // Nec plus ultra
 
 	if (val == '*')
 	{
-		*this->data >> val;
+		*(this->data) >> val;
 		return std::make_shared<ClosureRegex>(first);
 	}
 	else if (val == '+')
@@ -55,6 +58,6 @@ std::shared_ptr<IRegex> RegexParser::ParseRegex(char val)
 std::shared_ptr<IRegex> RegexParser::ParseRegex()
 {
 	char val;
-	*this->data >> val;
+	*(this->data) >> val;
 	return ParseRegex(val);
 }

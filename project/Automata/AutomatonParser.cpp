@@ -47,15 +47,15 @@ AutomatonParser::Automaton AutomatonParser::ReadAutomaton(std::istream& Input)
 	auto type = ReadType(Input);
 	if (type == Deterministic)
 	{
-		return std::make_unique<DFA>(ReadDFAutomaton(Input));
+		return std::make_shared<DFA>(ReadDFAutomaton(Input));
 	}
 	else if (type == NonDeterministic)
 	{
-		return std::make_unique<NFA>(ReadNFAutomaton(Input));
+		return std::make_shared<NFA>(ReadNFAutomaton(Input));
 	}
 	else
 	{
-		return std::make_unique<ENFA>(ReadENFAutomaton(Input));
+		return std::make_shared<ENFA>(ReadENFAutomaton(Input));
 	}
 }
 

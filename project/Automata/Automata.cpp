@@ -161,6 +161,19 @@ int main(int argc, const char* argv[])
 
 		output.close();
 	}
+	// else if (std::string(argv[1]) == "enfa2re")		// Sibert werkt hier
+	// {
+		// auto enfa = parser.ReadENFAutomaton(input);
+		// input.close();
+		
+		// auto regex = enfa.ToRegex();
+		
+		// std::ofstream output(argv[3]);
+
+		// parser.Write(regex, output);
+		
+		// output.close();
+	// }
 	else
 	{
 		auto automaton = parser.ReadAutomaton(input);

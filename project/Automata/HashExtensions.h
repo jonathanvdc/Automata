@@ -9,7 +9,7 @@ namespace std
 	template<typename T, typename V>
 	struct hash<std::pair<T, V>>
 	{
-		size_t operator()(const std::pair<T, V>& Value) const
+		size_t operator() (const std::pair<T, V>& Value) const
 		{
 			return hash<T>()(Value.first) ^ hash<V>()(Value.second);
 		}
@@ -32,7 +32,7 @@ namespace std
 	template<typename T>
 	struct hash<Optional<T>>
 	{
-		size_t operator()(const Optional<T>& Value)
+		size_t operator()(const Optional<T>& Value) const
 		{
 			if (!Value.HasValue) return 0;
 			else return hash<T>()(Value.Value);
@@ -42,7 +42,7 @@ namespace std
 	template<>
 	struct hash<std::shared_ptr<RegexState>>
 	{
-		size_t operator()(const std::shared_ptr<RegexState>& Value)
+		size_t operator()(const std::shared_ptr<RegexState>& Value) const
 		{
 			return (size_t)Value.get();
 		}
