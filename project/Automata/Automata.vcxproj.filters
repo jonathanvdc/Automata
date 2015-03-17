@@ -99,6 +99,9 @@
     <ClInclude Include="ClosureRegex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RegexParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Automata.cpp">
@@ -129,6 +132,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ClosureRegex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RegexParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

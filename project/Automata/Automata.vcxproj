@@ -35,6 +35,7 @@
     <ClInclude Include="Optional.h" />
     <ClInclude Include="Optional.hxx" />
     <ClInclude Include="PhiRegex.h" />
+    <ClInclude Include="RegexParser.h" />
     <ClInclude Include="RegexState.h" />
     <ClInclude Include="TransitionTable.h" />
     <ClInclude Include="TransitionTable.hxx" />
@@ -49,6 +50,7 @@
     <ClCompile Include="EpsilonRegex.cpp" />
     <ClCompile Include="LiteralRegex.cpp" />
     <ClCompile Include="PhiRegex.cpp" />
+    <ClCompile Include="RegexParser.cpp" />
     <ClCompile Include="RegexState.cpp" />
     <ClCompile Include="UnionRegex.cpp" />
   </ItemGroup>
