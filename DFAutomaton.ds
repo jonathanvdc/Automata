@@ -80,5 +80,135 @@ namespace Automata
         {
             return IsAcceptingState(PerformExtendedTransition(StartState, Characters));
         }
+
+        public const unordered_map<TState, LinearSet<TState>> TFAPartition()
+        {
+            var states = GetStates();
+            var symbols = GetAlphabet();
+            var accepting = AcceptingStates;
+
+            var statePairs = new LinearSet<pair<TState, TState>>();
+            foreach (var a in states) foreach (var b in states)
+                statePairs.Add(new pair<TState, TState>(a, b));
+
+            var distinguishablePairs = new LinearSet<pair<TState, TState>>();
+            foreach (var a in states)
+            {
+                if (!accepting.Contains(a))
+                {
+                    foreach (var b in accepting)
+                    {
+                        distinguishablePairs.Add(new pair<TState, TState>(a, b));
+                        distinguishablePairs.Add(new pair<TState, TState>(b, a));
+                    }
+                }
+            }
+
+            var unexaminedPairs = distinguishablePairs;
+            while (!unexaminedPairs.IsEmpty)
+            {
+                var ab = unexaminedPairs.Pop();
+                foreach (var sym in symbols)
+                {
+                    foreach (var pq in statePairs)
+                    {
+                        if (distinguishablePairs.Contains(pq))
+                            next;
+
+                        if (PerformTransition(pq.first, sym) == ab.first
+                            && PerformTransition(pq.second, sym) == ab.second)
+                        {
+                            distinguishablePairs.Add(pq);
+                            unexaminedPairs.Add(pq);
+                        }
+                    }
+                }
+            }
+
+            var partition = new unordered_map<TState, LinearSet<TState>>();
+            foreach (var q in states)
+                partition[q] = new LinearSet<TState>(q);
+
+            foreach (var ab in statePairs)
+            {
+                if (!distinguishablePairs.Contains(ab))
+                {
+                    var uni = partition[ab.first].Union(partition[ab.second]);
+                    partition[ab.first] = uni;
+                    partition[ab.second] = uni;
+                }
+            }
+
+            return partition;
+        }
+
+        public const LinearSet<TState> ReachableStates()
+        {
+            var todo = new LinearSet<TState>(StartState);
+            var reachable = new LinearSet<TState>();
+            while (!todo.IsEmpty)
+            {
+                var q = todo.Pop();
+                reachable.Add(q);
+                foreach (var sym in GetSymbols())
+                {
+                    var newState = PerformTransition(q, sym);
+                    if (!reachable.Contains(newState))
+                        todo.Add(newState);
+                }
+            }
+            return reachable;
+        }
+
+        public const DFAutomaton<LinearSet<TState>, TChar> Optimize()
+        {
+            var reachable = ReachableStates();
+            var filteredTable = new TransitionTable<pair<TState, TChar>, TState>();
+            var oldTable = TransitionFunction;
+            foreach (var item in oldTable.Map)
+            {
+                var sourceState = item.first.first;
+                if (reachable.Contains(sourceState))
+                    filteredTable.Add(item.first, item.second);
+            }
+            var partition = TFAPartition();
+
+            var optimalTable = new TransitionTable<pair<LinearSet<TState>, TChar>,
+                                                   LinearSet<TState>>();
+            foreach (var item in filteredTable.Map)
+            {
+                var sourceState = item.first.first;
+                var symbol = item.first.second;
+                var targetState = item.second;
+                var newPair = new pair<LinearSet<TState>, TChar>(
+                    partition[sourceState], symbol);
+                optimalTable.Add(newPair, partition[targetState]);
+            }
+
+            var final = new LinearSet<LinearSet<TState>>;
+            foreach (var q in AcceptingStates)
+                final.Add(partition[q]);
+
+            return new DFAutomaton<LinearSet<TState>, TChar>(
+                partition[StartState], final, optimalTable);
+        }
+
+        public const bool EquivalentTo(DFAutomaton<TState, TChar> other)
+        {
+            var taggedThis  = Rename(new TagFunction<TState, bool>(false), new IdFunction<TChar>());
+            var taggedOther = other.Rename(new TagFunction<TState, bool>(true), new IdFunction<TChar>());
+
+            var mergedTable = taggedThis.TransitionFunction;
+            mergedTable.Add(taggedOther.TransitionFunction);
+
+            var mergedAcceptingStates = taggedThis.AcceptingStates;
+            mergedAcceptingStates.AddAll(taggedOther.AcceptingStates);
+
+            var mergedAutomaton = new DFAutomaton<pair<TState, bool>, TChar>(
+                taggedThis.StartState, mergedAcceptingStates, mergedTable);
+            var partition = mergedAutomaton.TFAPartition();
+
+            return partition[taggedThis.StartState] == partition[taggedOther.StartState];
+        }
     }
 }
