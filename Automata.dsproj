@@ -21,5 +21,6 @@
     <Compile Include="UnionRegex.ds" />
     <Compile Include="ConcatRegex.ds" />
     <Compile Include="ClosureRegex.ds" />
+    <Compile Include="TagFunction.ds" />
   </ItemGroup>
 </Project>
