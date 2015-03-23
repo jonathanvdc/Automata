@@ -63,6 +63,16 @@ public struct LinearSet<T>
     {
         vals.pop_back();
     }
+
+    /// <summary>
+    /// Removes the last element from the linear set and returns it.
+    /// </summary>
+    public T Pop()
+    {
+        var elem = Last;
+        RemoveLast();
+        return elem;
+    }
     
     public const LinearSet<T> Union(LinearSet<T> Other)
     {
