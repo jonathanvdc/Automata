@@ -1,22 +1,21 @@
-#include <string>
+#include "EpsilonRegex.h"
+
 #include <memory>
+#include <string>
 #include <unordered_map>
 #include <utility>
 #include "ENFAutomaton.h"
-#include "RegexState.h"
+#include "IRegex.h"
 #include "LinearSet.h"
 #include "Optional.h"
+#include "RegexState.h"
 #include "TransitionTable.h"
-#include "IRegex.h"
-#include "EpsilonRegex.h"
 #include "HashExtensions.h"
 
 using namespace Automata;
 
-std::string EpsilonRegex::ToString() const
-{
-    return "\\e";
-}
+EpsilonRegex::EpsilonRegex()
+{ }
 
 ENFAutomaton<std::shared_ptr<RegexState>, std::string> EpsilonRegex::ToENFAutomaton() const
 {
@@ -30,5 +29,7 @@ ENFAutomaton<std::shared_ptr<RegexState>, std::string> EpsilonRegex::ToENFAutoma
     return ENFAutomaton<std::shared_ptr<RegexState>, std::string>(startState, acceptingStates, transTable);
 }
 
-EpsilonRegex::EpsilonRegex()
-{ }
+std::string EpsilonRegex::ToString() const
+{
+    return "\\e";
+}

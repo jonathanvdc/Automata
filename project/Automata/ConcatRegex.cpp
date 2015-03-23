@@ -1,33 +1,24 @@
+#include "ConcatRegex.h"
+
 #include <memory>
 #include <string>
 #include <utility>
-#include "IRegex.h"
-#include "UnionRegex.h"
-#include "IsInstance.h"
 #include "ENFAutomaton.h"
+#include "IRegex.h"
+#include "IsInstance.h"
+#include "LinearSet.h"
+#include "Optional.h"
 #include "RegexState.h"
 #include "TransitionTable.h"
-#include "Optional.h"
-#include "LinearSet.h"
-#include "ConcatRegex.h"
+#include "UnionRegex.h"
 #include "HashExtensions.h"
 
 using namespace Automata;
 
-std::string ConcatRegex::ToString() const
+ConcatRegex::ConcatRegex(std::shared_ptr<IRegex> Left, std::shared_ptr<IRegex> Right)
 {
-    std::string result;
-    if (stdx::isinstance<UnionRegex>(this->Left))
-        result = "(" + this->Left->ToString() + ")";
-    else
-        result = this->Left->ToString();
-
-    if (stdx::isinstance<UnionRegex>(this->Right))
-        result += "(" + this->Right->ToString() + ")";
-    else
-        result += this->Right->ToString();
-
-    return result;
+    this->Left = Left;
+    this->Right = Right;
 }
 
 ENFAutomaton<std::shared_ptr<RegexState>, std::string> ConcatRegex::ToENFAutomaton() const
@@ -54,8 +45,18 @@ ENFAutomaton<std::shared_ptr<RegexState>, std::string> ConcatRegex::ToENFAutomat
     return ENFAutomaton<std::shared_ptr<RegexState>, std::string>(startState, acceptingStates, transTable);
 }
 
-ConcatRegex::ConcatRegex(std::shared_ptr<IRegex> Left, std::shared_ptr<IRegex> Right)
+std::string ConcatRegex::ToString() const
 {
-    this->Left = Left;
-    this->Right = Right;
+    std::string result = nullptr;
+    if (stdx::isinstance<UnionRegex>(this->Left))
+        result = "(" + this->Left->ToString() + ")";
+    else
+        result = this->Left->ToString();
+
+    if (stdx::isinstance<UnionRegex>(this->Right))
+        result += "(" + this->Right->ToString() + ")";
+    else
+        result += this->Right->ToString();
+
+    return result;
 }

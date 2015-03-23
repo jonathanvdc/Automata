@@ -1,7 +1,8 @@
-#include <memory>
-#include <initializer_list>
-#include <vector>
 #include "ArraySlice.h"
+
+#include <initializer_list>
+#include <memory>
+#include <vector>
 
 using namespace stdx;
 

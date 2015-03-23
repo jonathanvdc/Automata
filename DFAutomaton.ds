@@ -8,11 +8,11 @@ namespace Automata
     public struct DFAutomaton<TState, TChar> : IAutomaton<TChar>
     {
         public const this(set TState StartState, set LinearSet<TState> AcceptingStates, set TransitionTable<pair<TState, TChar>, TState> TransitionFunction);
-        
+
         public TState StartState { const get; private set; }
         public LinearSet<TState> AcceptingStates { const get; private set; }
         public TransitionTable<pair<TState, TChar>, TState> TransitionFunction { const get; private set; }
-        
+
         public const TState PerformTransition(TState State, TChar Character)
         {
             var transFun = TransitionFunction;
@@ -27,7 +27,7 @@ namespace Automata
             }
             return result;
         }
-        
+
         public const DFAutomaton<TNState, TNChar> Rename<TNState, TNChar>(IFunction<TState, TNState>* StateRenamer, IFunction<TChar, TNChar>* CharRenamer)
         {
             TNState newStart = StateRenamer->Apply(StartState);
@@ -46,7 +46,7 @@ namespace Automata
             var transFun = new TransitionTable<pair<TNState, TNChar>, TNState>(newTransMap);
             return new DFAutomaton<TNState, TNChar>(newStart, newAccept, transFun);
         }
-        
+
         public const LinearSet<TState> GetStates()
         {
             LinearSet<TState> results = new LinearSet<TState>();
@@ -58,7 +58,7 @@ namespace Automata
             }
             return results;
         }
-        
+
         public const LinearSet<TChar> GetAlphabet()
         {
             LinearSet<TChar> results = new LinearSet<TChar>();
@@ -69,13 +69,13 @@ namespace Automata
             }
             return results;
         }
-        
+
         public const bool IsAcceptingState(TState State)
         {
             var acceptStates = AcceptingStates;
             return acceptStates.Contains(State);
         }
-        
+
         public const bool Accepts(TChar[] Characters)
         {
             return IsAcceptingState(PerformExtendedTransition(StartState, Characters));
@@ -88,15 +88,15 @@ namespace Automata
             var accepting = AcceptingStates;
 
             var statePairs = new LinearSet<pair<TState, TState>>();
-            foreach (var a in states) foreach (var b in states)
+            foreach (var a in states.Items) foreach (var b in states.Items)
                 statePairs.Add(new pair<TState, TState>(a, b));
 
             var distinguishablePairs = new LinearSet<pair<TState, TState>>();
-            foreach (var a in states)
+            foreach (var a in states.Items)
             {
                 if (!accepting.Contains(a))
                 {
-                    foreach (var b in accepting)
+                    foreach (var b in accepting.Items)
                     {
                         distinguishablePairs.Add(new pair<TState, TState>(a, b));
                         distinguishablePairs.Add(new pair<TState, TState>(b, a));
@@ -108,9 +108,9 @@ namespace Automata
             while (!unexaminedPairs.IsEmpty)
             {
                 var ab = unexaminedPairs.Pop();
-                foreach (var sym in symbols)
+                foreach (var sym in symbols.Items)
                 {
-                    foreach (var pq in statePairs)
+                    foreach (var pq in statePairs.Items)
                     {
                         if (distinguishablePairs.Contains(pq))
                             next;
@@ -126,10 +126,10 @@ namespace Automata
             }
 
             var partition = new unordered_map<TState, LinearSet<TState>>();
-            foreach (var q in states)
+            foreach (var q in states.Items)
                 partition[q] = new LinearSet<TState>(q);
 
-            foreach (var ab in statePairs)
+            foreach (var ab in statePairs.Items)
             {
                 if (!distinguishablePairs.Contains(ab))
                 {
@@ -150,7 +150,8 @@ namespace Automata
             {
                 var q = todo.Pop();
                 reachable.Add(q);
-                foreach (var sym in GetSymbols())
+                var alpha = GetAlphabet();
+                foreach (var sym in alpha.Items)
                 {
                     var newState = PerformTransition(q, sym);
                     if (!reachable.Contains(newState))
@@ -186,7 +187,8 @@ namespace Automata
             }
 
             var final = new LinearSet<LinearSet<TState>>;
-            foreach (var q in AcceptingStates)
+            var accStates = AcceptingStates;
+            foreach (var q in accStates.Items)
                 final.Add(partition[q]);
 
             return new DFAutomaton<LinearSet<TState>, TChar>(
@@ -195,8 +197,11 @@ namespace Automata
 
         public const bool EquivalentTo(DFAutomaton<TState, TChar> other)
         {
-            var taggedThis  = Rename(new TagFunction<TState, bool>(false), new IdFunction<TChar>());
-            var taggedOther = other.Rename(new TagFunction<TState, bool>(true), new IdFunction<TChar>());
+            var tagFalse = new TagFunction<TState, bool>(false);
+            var tagTrue = new TagFunction<TState, bool>(true);
+            var idFunc = new IdFunction<TChar>();
+            var taggedThis  = Rename<pair<TState, bool>, TChar>(&tagFalse, &idFunc);
+            var taggedOther = other.Rename<pair<TState, bool>, TChar>(&tagTrue, &idFunc);
 
             var mergedTable = taggedThis.TransitionFunction;
             mergedTable.Add(taggedOther.TransitionFunction);

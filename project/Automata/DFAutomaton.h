@@ -1,24 +1,45 @@
 #pragma once
-#include <utility>
 #include <unordered_map>
+#include <utility>
+#include "ArraySlice.h"
+#include "IAutomaton.h"
+#include "IFunction.h"
 #include "LinearSet.h"
 #include "TransitionTable.h"
-#include "ArraySlice.h"
-#include "IFunction.h"
-#include "IAutomaton.h"
 
 namespace Automata
 {
     /// \brief Defines a deterministic finite automaton.
     template<typename TState, typename TChar>
-    class DFAutomaton : public IAutomaton<TChar>
+    class DFAutomaton : public virtual IAutomaton<TChar>
     {
     public:
         DFAutomaton(TState StartState, LinearSet<TState> AcceptingStates, TransitionTable<std::pair<TState, TChar>, TState> TransitionFunction);
 
-        TState PerformTransition(TState State, TChar Character) const;
+        /// \brief Gets a boolean value that indicates whether the automaton accepts the given string.
+        bool Accepts(stdx::ArraySlice<TChar> Characters) const override;
+
+        bool EquivalentTo(DFAutomaton<TState, TChar> other) const;
+
+        LinearSet<TState> getAcceptingStates() const;
+
+        LinearSet<TChar> GetAlphabet() const;
+
+        TState getStartState() const;
+
+        LinearSet<TState> GetStates() const;
+
+        TransitionTable<std::pair<TState, TChar>, TState> getTransitionFunction() const;
+
+        bool IsAcceptingState(TState State) const;
+
+        DFAutomaton<LinearSet<TState>, TChar> Optimize() const;
 
         TState PerformExtendedTransition(TState State, stdx::ArraySlice<TChar> Characters) const;
+
+        TState PerformTransition(TState State, TChar Character) const;
+
+        LinearSet<TState> ReachableStates() const;
 
         template<typename TNState, typename TNChar>
         DFAutomaton<TNState, TNChar> Rename(const IFunction<TState, TNState>* StateRenamer, const IFunction<TChar, TNChar>* CharRenamer) const
@@ -40,29 +61,16 @@ namespace Automata
             return DFAutomaton<TNState, TNChar>(newStart, newAccept, transFun);
         }
 
-        LinearSet<TState> GetStates() const;
-
-        LinearSet<TChar> GetAlphabet() const;
-
-        bool IsAcceptingState(TState State) const;
-
-        /// \brief Gets a boolean value that indicates whether the automaton accepts the given string.
-        bool Accepts(stdx::ArraySlice<TChar> Characters) const override;
-
-        TransitionTable<std::pair<TState, TChar>, TState> getTransitionFunction() const;
-
-        TState getStartState() const;
-
-        LinearSet<TState> getAcceptingStates() const;
+        std::unordered_map<TState, LinearSet<TState>> TFAPartition() const;
     private:
-        void setTransitionFunction(TransitionTable<std::pair<TState, TChar>, TState> value);
+        void setAcceptingStates(LinearSet<TState> value);
 
         void setStartState(TState value);
 
-        void setAcceptingStates(LinearSet<TState> value);
+        void setTransitionFunction(TransitionTable<std::pair<TState, TChar>, TState> value);
 
-        TState StartState_value;
         LinearSet<TState> AcceptingStates_value;
+        TState StartState_value;
         TransitionTable<std::pair<TState, TChar>, TState> TransitionFunction_value;
     };
 }

@@ -1,6 +1,6 @@
 #pragma once
-#include <memory>
 #include <initializer_list>
+#include <memory>
 #include <vector>
 
 namespace stdx
