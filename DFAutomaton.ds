@@ -133,7 +133,8 @@ namespace Automata
             {
                 if (!distinguishablePairs.Contains(ab))
                 {
-                    var uni = partition[ab.first].Union(partition[ab.second]);
+                    var firstPart = partition[ab.first];
+                    var uni = firstPart.Union(partition[ab.second]);
                     partition[ab.first] = uni;
                     partition[ab.second] = uni;
                 }
