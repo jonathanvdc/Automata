@@ -14,6 +14,9 @@ using namespace Automata;
 
 std::string ClosureRegex::ToString() const
 {
+	if( this->Regex->ToString().size() == 1){
+		return this->Regex->ToString() + "*";
+	}
     return "(" + this->Regex->ToString() + ")*";
 }
 

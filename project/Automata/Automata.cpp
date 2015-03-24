@@ -20,6 +20,8 @@
 #include "AutomatonDotPrinter.h"
 #include "RegexParser.h"
 
+#include "DFAtoRE.h"
+
 typedef std::string State;
 typedef std::string Symbol;
 
@@ -72,6 +74,7 @@ int main(int argc, const char* argv[])
 		std::cout << " * accepts <input file> <string> (test a string)" << std::endl;
 		std::cout << " * dot <input file>.dfa <target file>.dot (gets a dot language representation)" << std::endl;
 		std::cout << " * re2enfa <input file>.re <target file>.enfa (regex->e-NFA conversion)" << std::endl;
+		std::cout << " * dfa2re <input file>.dfa <target file>.re (DFA->regex conversion)" << std::endl;
 		return 0;
 	}
 
@@ -161,19 +164,20 @@ int main(int argc, const char* argv[])
 
 		output.close();
 	}
-	// else if (std::string(argv[1]) == "enfa2re")		// Sibert werkt hier
-	// {
-		// auto enfa = parser.ReadENFAutomaton(input);
-		// input.close();
+	else if (std::string(argv[1]) == "dfa2re")		// Sibert werkt hier
+	{
+		auto dfa = parser.ReadDFAutomaton(input);
+		input.close();
 		
-		// auto regex = enfa.ToRegex();
+		auto regex = DFAtoRE(dfa);
 		
-		// std::ofstream output(argv[3]);
+		std::ofstream output(argv[3]);
 
-		// parser.Write(regex, output);
+		output << "Regex:\n";
+		output << regex->ToString();
 		
-		// output.close();
-	// }
+		output.close();
+	}
 	else
 	{
 		auto automaton = parser.ReadAutomaton(input);
