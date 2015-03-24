@@ -53,8 +53,8 @@ State NameRegexState(std::shared_ptr<RegexState> State, std::unordered_map<std::
 	{
 		Named[State] = Named.size();
 	}
-    std::ostringstream ss;
-    ss << Named[State];
+	std::ostringstream ss;
+	ss << Named[State];
 	return ss.str();
 }
 
@@ -74,6 +74,9 @@ int main(int argc, const char* argv[])
 		std::cout << " * accepts <input file> <string> (test a string)" << std::endl;
 		std::cout << " * dot <input file>.dfa <target file>.dot (gets a dot language representation)" << std::endl;
 		std::cout << " * re2enfa <input file>.re <target file>.enfa (regex->e-NFA conversion)" << std::endl;
+		std::cout << " * partition <input file>.dfa (show sets of equivalent states)" << std::endl;
+		std::cout << " * optimize <input file>.dfa <output file>.dfa (DFA optimization)" << std::endl;
+		std::cout << " * equivalent <input file A>.dfa <input file B>.dfa (DFA equivalence)" << std::endl;
 		return 0;
 	}
 
@@ -162,6 +165,47 @@ int main(int argc, const char* argv[])
 		parser.Write(renamedEnfa, output);
 
 		output.close();
+	}
+	else if (std::string(argv[1]) == "partition")
+	{
+		auto dfa = parser.ReadDFAutomaton(input);
+		std::cout << "The following sets of states are equivalent:" << std::endl;
+		std::set<State> uniqueEntries;
+		for (auto &item : dfa.TFAPartition())
+			uniqueEntries.insert(NameSets(item.second));
+		for (auto s : uniqueEntries)
+			std::cout << "- " << s << std::endl;
+	}
+	else if (std::string(argv[1]) == "optimize")
+	{
+		auto dfa = parser.ReadDFAutomaton(input);
+		auto newDfa = dfa.Optimize();
+
+		auto setRenamer = Automata::LambdaFunction<LinearSet<State>, State>(NameSets);
+		auto charRenamer = Automata::LambdaFunction<Symbol, Symbol>(id<Symbol>);
+
+		auto renamedDfa = newDfa.Rename(&setRenamer, &charRenamer);
+
+		std::ofstream output(argv[3]);
+
+		parser.Write(renamedDfa, output);
+
+		output.close();
+	}
+	else if (std::string(argv[1]) == "equivalent")
+	{
+		std::ifstream input2(argv[3]);
+		if (!input2)
+		{
+			std::cout << "Input file '" << argv[3] << "' could not be opened." << std::endl;
+			return 0;
+		}
+
+		auto dfa1 = parser.ReadDFAutomaton(input);
+		auto dfa2 = parser.ReadDFAutomaton(input2);
+		std::cout << "The given automata are ";
+		if (!dfa1.EquivalentTo(dfa2)) std::cout << "not ";
+		std::cout << "equivalent." << std::endl;
 	}
 	else
 	{
