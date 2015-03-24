@@ -204,10 +204,7 @@ std::unordered_map<TState, LinearSet<TState>> DFAutomaton<TState, TChar>::TFAPar
         LinearSet<TState> temp;
         if (!distinguishablePairs.Contains(ab0))
         {
-            auto uni = {
-                auto temp = partition[ab0.first];
-                &temp
-            }.Union(partition[ab0.second]);
+			auto uni = partition[ab0.first].Union(partition[ab0.second]);
             partition[ab0.first] = uni;
             partition[ab0.second] = uni;
         }
