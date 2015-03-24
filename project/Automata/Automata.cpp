@@ -53,7 +53,9 @@ State NameRegexState(std::shared_ptr<RegexState> State, std::unordered_map<std::
 	{
 		Named[State] = Named.size();
 	}
-	return std::to_string(Named[State]);
+    std::ostringstream ss;
+    ss << Named[State];
+	return ss.str();
 }
 
 template<typename T>

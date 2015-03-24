@@ -1,10 +1,12 @@
 #include "RegexParser.h"
+#include <istream>
+#include <string>
 
 std::shared_ptr<IRegex> RegexParser::ParseSimpleRegex(char val)
 {
 	if (val == '\\')
 	{
-		*this->data >> val;
+		this->data->get(val);
 		if (val == 'e')
 		{
 			return std::make_shared<EpsilonRegex>();
@@ -62,6 +64,6 @@ std::shared_ptr<IRegex> RegexParser::ParseRegex(char val)
 std::shared_ptr<IRegex> RegexParser::ParseRegex()
 {
 	char val;
-	*this->data >> val;
+	this->data->get(val);
 	return ParseRegex(val);
 }

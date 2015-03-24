@@ -14,7 +14,7 @@ namespace Automata
 		typedef DFAutomaton<State, Symbol> DFA;
 		typedef NFAutomaton<State, Symbol> NFA;
 		typedef ENFAutomaton<State, Symbol> ENFA;
-		typedef std::unique_ptr<IAutomaton<Symbol>> Automaton;
+		typedef std::shared_ptr<IAutomaton<Symbol>> Automaton;
 
 		enum AutomatonType
 		{
