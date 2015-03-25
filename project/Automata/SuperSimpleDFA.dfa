@@ -4,6 +4,7 @@ accepts 6 14 20 24
 transitions
 18 o 19
 19 n 20
+20 n 16
 5 s 6
 12 a 13
 8 n 9
