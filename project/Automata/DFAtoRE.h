@@ -20,6 +20,7 @@
 typedef std::string State;
 typedef std::string Char;
 
+
 std::shared_ptr<IRegex> concatRE( std::shared_ptr<IRegex> left, std::shared_ptr<IRegex> right){
 	if( left->ToString() == "\\e"){
 		return right;
@@ -51,6 +52,7 @@ std::shared_ptr<IRegex> closeRE( std::shared_ptr<IRegex> in ){
 	return std::make_shared<ClosureRegex>(in);
 }
 
+
 class REAutomaton
 {
 private:
@@ -58,22 +60,15 @@ private:
 	State startState;
 	std::vector<State> acceptStates;
 	
-	std::unordered_map<State, std::unordered_map<State, std::shared_ptr<IRegex>>> transitionMap;
+	std::unordered_map<State, std::vector<std::pair<std::shared_ptr<IRegex>, State>>> transitionMap;
 	
 public:
-	REAutomaton( DFAutomaton<std::string, std::string>& DFA ){	// Create an REAutomaton that mirrors an existing DFA
-		
-		for( State from: DFA.GetStates().getItems()){
-			for( State to: DFA.GetStates().getItems()){
-				transitionMap[from][to] = std::make_shared<PhiRegex>();
-			}
-		}
-		
+	REAutomaton(DFAutomaton<std::string, std::string>& DFA){	// Create an REAutomaton that mirrors an existing DFA
 		for( State state : DFA.GetStates().getItems()){
 			states.push_back(state);
 			for( Char trans: DFA.GetAlphabet().getItems()){
 				if(DFA.PerformTransition(state, trans) != ""){
-					this->addTransition(state, DFA.PerformTransition(state, trans), std::make_shared<LiteralRegex>(trans));
+					transitionMap[state].push_back( std::pair<std::shared_ptr<IRegex>, State> (std::make_shared<LiteralRegex>(trans),  DFA.PerformTransition(state, trans)));
 				}
 			}
 		}
@@ -85,16 +80,12 @@ public:
 		}
 	}
 	
-	REAutomaton( REAutomaton* originalREA, State acceptState ){	// Create a duplicate REAutomaton that only has a single accept state
+	REAutomaton( REAutomaton* originalREA, State acceptState){	// Create a duplicate REAutomaton that only has a single accept state
 		this-> states = originalREA-> states;
 		this-> startState = originalREA-> startState;
 		this-> transitionMap = originalREA-> transitionMap;
 		
 		this-> acceptStates.push_back(acceptState);
-	}
-	
-	void addTransition(State from, State to, std::shared_ptr<IRegex> RE){
-		this->transitionMap[from][to] = unifyRE(transitionMap[from][to], RE);
 	}
 	
 	std::shared_ptr<IRegex> toRE(){
@@ -108,54 +99,109 @@ public:
 			
 			while( REA.states.size() > 2 || (REA.states.size() == 2 && REA.startState == REA.acceptStates[0])){
 				
-					// Find a removable state s 			(s = neither start nor accept)
 				State s;
-				for( State state : REA.states ){
-					if( state != REA.startState && state != REA.acceptStates[0]) s = state;
+				for( State toet : REA.states ){
+					if( toet != REA.startState && toet != REA.acceptStates[0]) s = toet;
 				}
 				
-					// Find S : delta(s, S) == s 			(s -> s)
+					// Find S and pairs of (P, p): delta(s, S) == s and delta(s, P) == p
 				
-				std::shared_ptr<IRegex> S = REA.transitionMap[s][s];
+				std::shared_ptr<IRegex> S = std::make_shared<PhiRegex>();
+				std::vector<std::pair<std::shared_ptr<IRegex>, State>> pPairs;
+				
+				
+				for( auto transitionPair : REA.transitionMap[s]){
+					if( transitionPair.second == s){
+						S = unifyRE(S, transitionPair.first);
+					}else{
+						pPairs.push_back(transitionPair);
+					}
+				}
+			
+					// Find pairs of (Q, q): delta(s, Q) = q
+					
+				for( State q: REA.states ){
+					if( q != s ){
+						
+						std::vector<std::pair<std::shared_ptr<IRegex>, State>> qPairsNew;
+						
+						for( auto qPair : REA.transitionMap[q] ){
+							if( qPair.second == s){					// (Q, q): delta(s, Q) = q
 								
-				for( State q: REA.states ){ if( q != s ){
-					
-						// Find Q : delta(q, Q) = s			(q -> s)
-					
-					std::shared_ptr<IRegex> Q = REA.transitionMap[q][s];
-					
-					for( State p : REA.states){ if( p != s){
+								for( auto pPair: pPairs ){
+									
+									// Find R
+									
+									std::shared_ptr<IRegex> R = std::make_shared<PhiRegex>();
+									for( auto qpPair : REA.transitionMap[q]){
+										if( qpPair.second == pPair.second){
+											R = unifyRE(R, qpPair.first);
+										}
+									}
+									
+									std::shared_ptr<IRegex> newRE = qPair.first;	// Q
+									newRE = concatRE(newRE, closeRE(S));			// QS*
+									newRE = concatRE(newRE, pPair.first);			// QS*P
+									newRE = unifyRE( R, newRE);						// R + QS*P
+									
+									qPairsNew.push_back( std::pair<std::shared_ptr<IRegex>, State> (newRE, pPair.second));
 						
-							// Find P : delta(s, P) = p		(s -> p)
+								}
+							}else{	// qPair.Second != s
+								qPairsNew.push_back(qPair);
+							}
+						}
 						
-						std::shared_ptr<IRegex> P = REA.transitionMap[s][p];
+						if(qPairsNew.size() > 1){
+							for( auto it = qPairsNew.begin(); it != qPairsNew.end()-1; it++){
+								if (it->second == q){
+									for( auto subit = it+1; it != qPairsNew.end(); subit++){
+										if( subit->second == q){
+											qPairsNew.erase(subit);
+											break;
+										}
+									}
+								}
+							}
+						}
 						
-							// Find R : delta(q, R) = p		(q -> p)
+						REA.transitionMap[q] = qPairsNew;
 						
-						std::shared_ptr<IRegex> R = REA.transitionMap[q][p];
-						
-							// New P = (R + QS*P)
-						
-						std::shared_ptr<IRegex> newP = unifyRE( R, concatRE(concatRE( Q, closeRE(S)), P));
-						
-						REA.transitionMap[q][p] = newP;
-					}}					
-				}}
-				
-				// Remove every trace of State s
-				
-				REA.states.erase( std::find(REA.states.begin(), REA.states.end(), s));	// Remove s
-				REA.transitionMap.erase(s);												// Remove every transition from s
-				for( State state : REA.states){
-					REA.transitionMap[state].erase(s);									// Remove every transition to s
+					}
 				}
+				
+				// Dirty work: remove every trace of S
+				
+				REA.states.erase( std::find(REA.states.begin(), REA.states.end(), s));	// remove the state s
+				
+				REA.transitionMap.erase(s);	// remove every transition from s
+				
+				
 			}
 			// Interpret the reduced REA:
 			
-			std::shared_ptr<IRegex> R = REA.transitionMap[REA.startState][REA.startState];				// start 	-> 	start	
-			std::shared_ptr<IRegex> S = REA.transitionMap[REA.startState][REA.acceptStates[0]]; 		// start 	-> 	end		
-			std::shared_ptr<IRegex> T = REA.transitionMap[REA.acceptStates[0]][REA.startState];			// end 		-> 	start	
-			std::shared_ptr<IRegex> U = REA.transitionMap[REA.acceptStates[0]][REA.acceptStates[0]]; 	// end 		-> 	end		
+			std::shared_ptr<IRegex> R = std::make_shared<PhiRegex>();	// start -> start
+			std::shared_ptr<IRegex> S = std::make_shared<PhiRegex>(); 	// start -> end
+			
+			
+			for( auto startDouble : REA.transitionMap[REA.startState]){
+				if( startDouble.second == REA.startState){
+					R = startDouble.first;
+				} else if(startDouble.second != ""){
+					S = startDouble.first;
+				}
+			}
+			
+			std::shared_ptr<IRegex> U = std::make_shared<PhiRegex>();	// end -> end
+			std::shared_ptr<IRegex> T = std::make_shared<PhiRegex>(); 	// end -> start
+			
+			for( auto endDouble : REA.transitionMap[REA.acceptStates[0]]){
+				if( endDouble.second == REA.acceptStates[0]){
+					U = endDouble.first;
+				} else if(endDouble.second != ""){
+					T = endDouble.first;
+				}
+			}
 			
 			std::shared_ptr<IRegex> thisRegex = std::make_shared<PhiRegex>();
 			
