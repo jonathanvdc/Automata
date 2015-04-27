@@ -1,0 +1,230 @@
+// This test targets the CLR (.Net) platform and runtime, not C++.
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Linq;
+using System.Diagnostics;
+using System.IO;
+
+namespace Automata
+{
+    public static class AutomataTests
+    {
+        public const char[] GenerateAlphabet(Random rand)
+        {
+            var results = new HashSet<char>();
+            int count = rand.Next(2, 5);
+            for (int i = 0; i < count; i++)
+            {
+                char val = (char)((int)'a' + rand.Next(0, 26));
+                while (results.Contains(val))
+                {
+                    val = (char)((int)'a' + rand.Next(0, 26));
+                }
+                results.Add(val);
+            }
+            return Enumerable.ToArray<char>(results);
+        }
+
+        public const char[] GenerateStates(Random rand)
+        {
+            int count = rand.Next(1, 10);
+            var results = new char[count];
+            char current = 'A';
+            foreach (var item in results)
+            {
+                item = current;
+                current = (char)((int)current + 1);
+            }
+            return results;
+        }
+
+        public const string GenerateString(char[] Alphabet, Random rand)
+        {
+            int count = rand.Next(1, 30);
+            var result = new StringBuilder(count);
+            for (int i = 0; i < count; i++)
+            {
+                result.Append(GetRandomElement<char>(Alphabet, rand));
+            }
+            return (string)result;
+        }
+
+        private T GetRandomElement<T>(T[] Values, Random rand)
+        {
+            return Values[rand.Next(Values.Length)];
+        }
+
+        public const string GenerateNFA(Random rand, char[] alpha, bool AllowEpsilon)
+        {
+            var states = GenerateStates(rand);
+
+            var sb = new StringBuilder();
+
+            if (AllowEpsilon)
+                sb.AppendLine("enfa");
+            else
+                sb.AppendLine("nfa");
+
+            sb.AppendLine("start " + GetRandomElement<char>(states, rand));
+            sb.Append("accepts");
+            int acceptCount = rand.Next(0, states.Length);
+            var accepted = new HashSet<char>();
+            for (int i = 0; i < acceptCount; i++)
+            {
+                accepted.Add(GetRandomElement<char>(states, rand));
+            }
+            foreach (var item in accepted)
+            {
+                sb.Append(' ');
+                sb.Append(item);
+            }
+            sb.AppendLine();
+
+            int transCount = rand.Next(0, states.Length * states.Length);
+            sb.AppendLine("transitions");
+
+            for (int i = 0; i < transCount; i++)
+            {
+                char fromState = GetRandomElement<char>(states, rand);
+                char toState = GetRandomElement<char>(states, rand);
+
+                string transName;
+                if (AllowEpsilon && rand.Next(0, 4) == 1)
+                {
+                    transName = "->";
+                }
+                else transName = (string)GetRandomElement<char>(alpha, rand);
+
+                sb.Append(fromState);
+                sb.Append(' ').Append(transName).Append(' ');
+                sb.Append(toState).AppendLine();
+            }
+
+            return (string)sb;
+        }
+
+        // Borrowed from http://www.codeproject.com/Articles/79620/Run-console-application-from-a-NET-application
+        public string RunCmd(string Name, string[] commands)
+        {
+            string returnvalue = string.Empty;
+
+            ProcessStartInfo info = new ProcessStartInfo(Name);
+            var sb = new StringBuilder();
+            foreach (var command in commands)
+            {
+                sb.Append(" ");
+                sb.Append(command);
+            }
+            info.Arguments = (string)sb;
+            info.UseShellExecute = false;
+            info.RedirectStandardInput = true;
+            info.RedirectStandardOutput = true;
+            info.RedirectStandardError = true;
+            info.CreateNoWindow = true;
+
+            Process process = Process.Start(info);
+
+            StreamWriter sw = process.StandardInput;
+            StreamReader sr = process.StandardOutput;
+            StreamReader se = process.StandardError;
+
+            sw.Close();
+
+            returnvalue = sr.ReadToEnd() + se.ReadToEnd();
+
+            process.WaitForExit();
+
+            process.Dispose();
+
+            return returnvalue;
+        }
+
+        private void WriteAutomaton(string Automaton, string Path)
+        {
+            var stream = new FileStream(Path, FileMode.Create, FileAccess.Write);
+            var writer = new StreamWriter(stream);
+            writer.Write(Automaton);
+            writer.Dispose();
+            stream.Dispose();
+        }
+
+        public void Main(string[] Args)
+        {
+            if (Args.Length < 2)
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.Write("We require more minerals.");
+                Console.ResetColor();
+                Console.Write(" I mean, err... command-line arguments. Yes, ");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("command-line arguments.");
+                Console.ResetColor();
+                Console.WriteLine("Usage: create|test nfa|enfa [<apppath.exe> automaton-test-count string-test-count]")
+                return;
+            }
+
+            bool createOnly = Args[0].Trim(null).ToLower().Equals("create");
+
+            bool allowEpsilon = Args[1].Trim(null).ToLower().Equals("enfa");
+
+            var rand = new Random();
+
+            if (createOnly)
+            {
+                var alpha = GenerateAlphabet(rand);
+                Console.WriteLine(GenerateNFA(rand, alpha, allowEpsilon));
+            }
+            else
+            {
+                string appPath = Args[2];
+                int testCount = int.Parse(Args[3]);
+                int stringTestCount = int.Parse(Args[4]);
+
+                for (int i = 0; i < testCount; i++)
+                {
+                    var alpha = GenerateAlphabet(rand);
+                    Console.WriteLine("Generating automaton...");
+                    var genNfa = GenerateNFA(rand, alpha, allowEpsilon);
+                    WriteAutomaton(genNfa, "temp_input.automaton");
+                    Console.WriteLine("Performing ssc/mssc...");
+                    if (allowEpsilon)
+                    {
+                        RunCmd(appPath, new string[] { "mssc", "temp_input.automaton", "temp_output.dfa" });
+                    }
+                    else
+                    {
+                        RunCmd(appPath, new string[] { "ssc", "temp_input.automaton", "temp_output.dfa" });
+                    }
+                    Console.WriteLine("Performed ssc/mssc");
+
+                    for (int j = 0; j < stringTestCount; j++)
+                    {
+                        string testStr = GenerateString(alpha, rand);
+
+                        Console.WriteLine("Testing '" + testStr + "'...");
+
+                        string enfaOutput = RunCmd(appPath, new string[] { "accepts", "temp_input.automaton", testStr });
+                        string dfaOutput = RunCmd(appPath, new string[] { "accepts", "temp_output.dfa", testStr });
+
+                        if (!enfaOutput.Equals(dfaOutput))
+                        {
+                            Console.WriteLine("Whoa. Output for string '" + testStr +
+                                "' was '" + enfaOutput + "' when running the (e)nfa, but '" +
+                                dfaOutput + "' when running the dfa. Stopping here!");
+                            return;
+                        }
+
+                        Console.WriteLine("Output for '" + testStr + "': '" + dfaOutput.Trim(null) + "'");
+                    }
+
+                    Console.WriteLine("Just ran automaton " + (i + 1) + " of " + testCount + ". So far so good.");
+                    Console.WriteLine();
+                }
+
+                Console.WriteLine("Seems like it all checks out.");
+            }
+        }
+    }
+}
