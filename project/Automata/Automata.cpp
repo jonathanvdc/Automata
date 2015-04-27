@@ -58,12 +58,6 @@ State NameRegexState(std::shared_ptr<RegexState> State, std::unordered_map<std::
 	return ss.str();
 }
 
-template<typename T>
-T id(T Value)
-{
-	return Value;
-}
-
 int main(int argc, const char* argv[])
 {
 	if (argc < 2)
@@ -118,7 +112,7 @@ int main(int argc, const char* argv[])
 		auto dfa = nfa.ToDFAutomaton();
 
 		auto setRenamer = Automata::LambdaFunction<LinearSet<State>, State>(NameSets);
-		auto charRenamer = Automata::LambdaFunction<Symbol, Symbol>(id<Symbol>);
+		IdFunction<Symbol> charRenamer;
 
 		auto renamedDfa = dfa.Rename(&setRenamer, &charRenamer);
 
@@ -135,7 +129,7 @@ int main(int argc, const char* argv[])
 		auto dfa = enfa.ToDFAutomaton();
 
 		auto setRenamer = Automata::LambdaFunction<LinearSet<State>, State>(NameSets);
-		auto charRenamer = Automata::LambdaFunction<Symbol, Symbol>(id<Symbol>);
+		IdFunction<Symbol> charRenamer;
 
 		auto renamedDfa = dfa.Rename(&setRenamer, &charRenamer);
 
@@ -156,7 +150,7 @@ int main(int argc, const char* argv[])
 
 		std::unordered_map<std::shared_ptr<RegexState>, int> names;
 		auto setRenamer = Automata::LambdaFunction<std::shared_ptr<RegexState>, State>([&](std::shared_ptr<RegexState> state) { return NameRegexState(state, names); });
-		auto charRenamer = Automata::LambdaFunction<Symbol, Symbol>(id<Symbol>);
+		IdFunction<Symbol> charRenamer;
 
 		auto renamedEnfa = enfa.Rename<State, Symbol>(&setRenamer, &charRenamer);
 
