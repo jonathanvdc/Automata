@@ -237,7 +237,7 @@ namespace Automata
                         nonTrivialCount++;
                     }
 
-                    Console.WriteLine("Just ran automaton " + (i + 1) + " of " + testCount + ". So far so good.");
+                    Console.WriteLine("Just ran automaton " + (i + 1) + " out of " + testCount + ". So far so good.");
                     Console.WriteLine();
                 }
 
