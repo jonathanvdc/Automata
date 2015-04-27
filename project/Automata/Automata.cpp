@@ -176,7 +176,7 @@ int main(int argc, const char* argv[])
 		auto newDfa = dfa.Optimize();
 
 		auto setRenamer = Automata::LambdaFunction<LinearSet<State>, State>(NameSets);
-		auto charRenamer = Automata::LambdaFunction<Symbol, Symbol>(id<Symbol>);
+		IdFunction<Symbol> charRenamer;
 
 		auto renamedDfa = newDfa.Rename(&setRenamer, &charRenamer);
 
