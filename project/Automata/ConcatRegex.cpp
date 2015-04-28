@@ -47,7 +47,7 @@ ENFAutomaton<std::shared_ptr<RegexState>, std::string> ConcatRegex::ToENFAutomat
 
 std::string ConcatRegex::ToString() const
 {
-    std::string result = nullptr;
+    std::string result;
     if (stdx::isinstance<UnionRegex>(this->Left))
         result = "(" + this->Left->ToString() + ")";
     else
