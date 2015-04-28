@@ -47,6 +47,7 @@
     <ClCompile Include="AutomatonParser.cpp" />
     <ClCompile Include="ClosureRegex.cpp" />
     <ClCompile Include="ConcatRegex.cpp" />
+    <ClCompile Include="DFAtoRE.cpp" />
     <ClCompile Include="EpsilonRegex.cpp" />
     <ClCompile Include="LiteralRegex.cpp" />
     <ClCompile Include="PhiRegex.cpp" />
