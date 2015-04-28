@@ -1,7 +1,51 @@
-#include <vector>
-#include <initializer_list>
-#include "ArraySlice.h"
 #include "LinearSet.h"
+
+#include <initializer_list>
+#include <vector>
+#include "ArraySlice.h"
+
+template<typename T>
+LinearSet<T>::LinearSet()
+{ }
+
+template<typename T>
+LinearSet<T>::LinearSet(std::vector<T> Values)
+{
+    this->vals = Values;
+}
+
+template<typename T>
+LinearSet<T>::LinearSet(stdx::ArraySlice<T> Values)
+{
+    this->vals = (std::vector<T>)Values;
+}
+
+template<typename T>
+LinearSet<T>::LinearSet(std::initializer_list<T> Values)
+{
+    this->vals = std::vector<T>(Values);
+}
+
+template<typename T>
+LinearSet<T>::LinearSet(T Value)
+{
+    this->vals.push_back(Value);
+}
+
+template<typename T>
+void LinearSet<T>::Add(T Value)
+{
+    if (!this->Contains(Value))
+        this->vals.push_back(Value);
+
+}
+
+template<typename T>
+void LinearSet<T>::AddAll(LinearSet<T> Other)
+{
+    for (auto& item : Other.vals)
+        this->Add(item);
+}
 
 template<typename T>
 bool LinearSet<T>::Contains(T Value) const
@@ -24,18 +68,26 @@ bool LinearSet<T>::ContainsAll(LinearSet<T> Values) const
 }
 
 template<typename T>
-void LinearSet<T>::Add(T Value)
+LinearSet<T> LinearSet<T>::Intersect(LinearSet<T> Other) const
 {
-    if (!this->Contains(Value))
-        this->vals.push_back(Value);
-
+    LinearSet<T> result;
+    for (auto& item : this->vals)
+    {
+        if (Other.Contains(item))
+        {
+            result.Add(item);
+        }
+    }
+    return result;
 }
 
+/// \brief Removes the last element from the linear set and returns it.
 template<typename T>
-void LinearSet<T>::AddAll(LinearSet<T> Other)
+T LinearSet<T>::Pop()
 {
-    for (auto& item : Other.vals)
-        this->Add(item);
+    auto elem = this->getLast();
+    this->RemoveLast();
+    return elem;
 }
 
 template<typename T>
@@ -53,24 +105,6 @@ LinearSet<T> LinearSet<T>::Union(LinearSet<T> Other) const
 }
 
 template<typename T>
-LinearSet<T> LinearSet<T>::Intersect(LinearSet<T> Other) const
-{
-    LinearSet<T> result;
-    for (auto& item : this->vals)
-    {
-        if (Other.Contains(item))
-        {
-            result.Add(item);
-        }
-    }
-    return result;
-}
-
-template<typename T>
-LinearSet<T>::LinearSet()
-{ }
-
-template<typename T>
 LinearSet<T> LinearSet<T>::Without(T Value) const
 {
     LinearSet<T> result;
@@ -82,42 +116,6 @@ LinearSet<T> LinearSet<T>::Without(T Value) const
         }
     }
     return result;
-}
-
-template<typename T>
-bool LinearSet<T>::operator==(LinearSet<T> Other) const
-{
-    return this->ContainsAll(Other) && Other.ContainsAll(*this);
-}
-
-template<typename T>
-bool LinearSet<T>::operator!=(LinearSet<T> Other) const
-{
-    return !this->ContainsAll(Other) || !Other.ContainsAll(*this);
-}
-
-template<typename T>
-LinearSet<T>::LinearSet(std::vector<T> Values)
-{
-    this->vals = Values;
-}
-
-template<typename T>
-LinearSet<T>::LinearSet(stdx::ArraySlice<T> Values)
-{
-    this->vals = (std::vector<T>)Values;
-}
-
-template<typename T>
-LinearSet<T>::LinearSet(std::initializer_list<T> Values)
-{
-    this->vals = std::vector<T>(Values);
-}
-
-template<typename T>
-std::vector<T> LinearSet<T>::getItems() const
-{
-    return this->vals;
 }
 
 template<typename T>
@@ -133,7 +131,25 @@ bool LinearSet<T>::getIsEmpty() const
 }
 
 template<typename T>
+std::vector<T> LinearSet<T>::getItems() const
+{
+    return this->vals;
+}
+
+template<typename T>
 T LinearSet<T>::getLast() const
 {
     return this->vals[this->getCount() - 1];
+}
+
+template<typename T>
+bool LinearSet<T>::operator==(LinearSet<T> Other) const
+{
+    return this->ContainsAll(Other) && Other.ContainsAll(*this);
+}
+
+template<typename T>
+bool LinearSet<T>::operator!=(LinearSet<T> Other) const
+{
+    return !this->ContainsAll(Other) || !Other.ContainsAll(*this);
 }

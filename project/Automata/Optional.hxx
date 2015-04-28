@@ -1,5 +1,19 @@
 #include "Optional.h"
 
+
+template<typename T>
+Optional<T>::Optional()
+{
+    this->HasValue = false;
+}
+
+template<typename T>
+Optional<T>::Optional(T Value)
+{
+    this->Value = Value;
+    this->HasValue = true;
+}
+
 template<typename T>
 bool Optional<T>::operator==(Optional<T> Other) const
 {
@@ -30,17 +44,4 @@ template<typename T>
 bool Optional<T>::operator!=(T Other) const
 {
     return !this->HasValue || this->Value == Other;
-}
-
-template<typename T>
-Optional<T>::Optional(T Value)
-{
-    this->Value = Value;
-    this->HasValue = true;
-}
-
-template<typename T>
-Optional<T>::Optional()
-{
-    this->HasValue = false;
 }

@@ -1,19 +1,61 @@
-#include <utility>
+#include "NFAutomaton.h"
+
 #include <unordered_map>
-#include "LinearSet.h"
-#include "TransitionTable.h"
+#include <utility>
 #include "ArraySlice.h"
 #include "DFAutomaton.h"
 #include "IAutomaton.h"
-#include "NFAutomaton.h"
+#include "LinearSet.h"
+#include "TransitionTable.h"
 
 using namespace Automata;
 
 template<typename TState, typename TChar>
-LinearSet<TState> NFAutomaton<TState, TChar>::PerformTransition(TState State, TChar Character) const
+NFAutomaton<TState, TChar>::NFAutomaton(TState StartState, LinearSet<TState> AcceptingStates, TransitionTable<std::pair<TState, TChar>, LinearSet<TState>> TransitionFunction)
 {
-    auto transFun = this->getTransitionFunction();
-    return transFun.Apply(std::pair<TState, TChar>(State, Character));
+    this->setStartState(StartState);
+    this->setAcceptingStates(AcceptingStates);
+    this->setTransitionFunction(TransitionFunction);
+}
+
+/// \brief Gets a boolean value that indicates whether the automaton accepts the given string.
+template<typename TState, typename TChar>
+bool NFAutomaton<TState, TChar>::Accepts(stdx::ArraySlice<TChar> Characters) const
+{
+    return this->ContainsAcceptingState(this->PerformExtendedTransition(this->getStartState(), Characters));
+}
+
+template<typename TState, typename TChar>
+bool NFAutomaton<TState, TChar>::ContainsAcceptingState(LinearSet<TState> States) const
+{
+    auto acceptStates = this->getAcceptingStates();
+    auto intersection = acceptStates.Intersect(States);
+    return !intersection.getIsEmpty();
+}
+
+template<typename TState, typename TChar>
+LinearSet<TChar> NFAutomaton<TState, TChar>::GetAlphabet() const
+{
+    LinearSet<TChar> results;
+    auto transfunc = this->getTransitionFunction();
+    for (auto& item : transfunc.getMap())
+    {
+        results.Add(item.first.second);
+    }
+    return results;
+}
+
+template<typename TState, typename TChar>
+LinearSet<TState> NFAutomaton<TState, TChar>::GetStates() const
+{
+    LinearSet<TState> results;
+    auto transfunc = this->getTransitionFunction();
+    for (auto& item : transfunc.getMap())
+    {
+        results.Add(item.first.first);
+        results.AddAll(item.second);
+    }
+    return results;
 }
 
 template<typename TState, typename TChar>
@@ -38,43 +80,10 @@ LinearSet<TState> NFAutomaton<TState, TChar>::PerformExtendedTransition(TState S
 }
 
 template<typename TState, typename TChar>
-bool NFAutomaton<TState, TChar>::ContainsAcceptingState(LinearSet<TState> States) const
+LinearSet<TState> NFAutomaton<TState, TChar>::PerformTransition(TState State, TChar Character) const
 {
-    auto acceptStates = this->getAcceptingStates();
-    auto intersection = acceptStates.Intersect(States);
-    return !intersection.getIsEmpty();
-}
-
-/// \brief Gets a boolean value that indicates whether the automaton accepts the given string.
-template<typename TState, typename TChar>
-bool NFAutomaton<TState, TChar>::Accepts(stdx::ArraySlice<TChar> Characters) const
-{
-    return this->ContainsAcceptingState(this->PerformExtendedTransition(this->getStartState(), Characters));
-}
-
-template<typename TState, typename TChar>
-LinearSet<TState> NFAutomaton<TState, TChar>::GetStates() const
-{
-    LinearSet<TState> results;
-    auto transfunc = this->getTransitionFunction();
-    for (auto& item : transfunc.getMap())
-    {
-        results.Add(item.first.first);
-        results.AddAll(item.second);
-    }
-    return results;
-}
-
-template<typename TState, typename TChar>
-LinearSet<TChar> NFAutomaton<TState, TChar>::GetAlphabet() const
-{
-    LinearSet<TChar> results;
-    auto transfunc = this->getTransitionFunction();
-    for (auto& item : transfunc.getMap())
-    {
-        results.Add(item.first.second);
-    }
-    return results;
+    auto transFun = this->getTransitionFunction();
+    return transFun.Apply(std::pair<TState, TChar>(State, Character));
 }
 
 /// \brief Performs the subset construction on this automaton.
@@ -123,29 +132,11 @@ DFAutomaton<LinearSet<TState>, TChar> NFAutomaton<TState, TChar>::ToDFAutomaton(
 }
 
 template<typename TState, typename TChar>
-NFAutomaton<TState, TChar>::NFAutomaton(TState StartState, LinearSet<TState> AcceptingStates, TransitionTable<std::pair<TState, TChar>, LinearSet<TState>> TransitionFunction)
-{
-    this->setStartState(StartState);
-    this->setAcceptingStates(AcceptingStates);
-    this->setTransitionFunction(TransitionFunction);
-}
-
-template<typename TState, typename TChar>
-TransitionTable<std::pair<TState, TChar>, LinearSet<TState>> NFAutomaton<TState, TChar>::getTransitionFunction() const
-{
-    return this->TransitionFunction_value;
-}
-template<typename TState, typename TChar>
-void NFAutomaton<TState, TChar>::setTransitionFunction(TransitionTable<std::pair<TState, TChar>, LinearSet<TState>> value)
-{
-    this->TransitionFunction_value = value;
-}
-
-template<typename TState, typename TChar>
 LinearSet<TState> NFAutomaton<TState, TChar>::getAcceptingStates() const
 {
     return this->AcceptingStates_value;
 }
+
 template<typename TState, typename TChar>
 void NFAutomaton<TState, TChar>::setAcceptingStates(LinearSet<TState> value)
 {
@@ -157,8 +148,21 @@ TState NFAutomaton<TState, TChar>::getStartState() const
 {
     return this->StartState_value;
 }
+
 template<typename TState, typename TChar>
 void NFAutomaton<TState, TChar>::setStartState(TState value)
 {
     this->StartState_value = value;
+}
+
+template<typename TState, typename TChar>
+TransitionTable<std::pair<TState, TChar>, LinearSet<TState>> NFAutomaton<TState, TChar>::getTransitionFunction() const
+{
+    return this->TransitionFunction_value;
+}
+
+template<typename TState, typename TChar>
+void NFAutomaton<TState, TChar>::setTransitionFunction(TransitionTable<std::pair<TState, TChar>, LinearSet<TState>> value)
+{
+    this->TransitionFunction_value = value;
 }

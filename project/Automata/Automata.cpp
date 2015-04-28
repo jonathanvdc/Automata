@@ -55,13 +55,9 @@ State NameRegexState(std::shared_ptr<RegexState> State, std::unordered_map<std::
 	{
 		Named[State] = Named.size();
 	}
-	return std::to_string(Named[State]);
-}
-
-template<typename T>
-T id(T Value)
-{
-	return Value;
+	std::ostringstream ss;
+	ss << Named[State];
+	return ss.str();
 }
 
 int main(int argc, const char* argv[])
@@ -75,6 +71,9 @@ int main(int argc, const char* argv[])
 		std::cout << " * dot <input file>.dfa <target file>.dot (gets a dot language representation)" << std::endl;
 		std::cout << " * re2enfa <input file>.re <target file>.enfa (regex->e-NFA conversion)" << std::endl;
 		std::cout << " * dfa2re <input file>.dfa <target file>.re (DFA->regex conversion)" << std::endl;
+		std::cout << " * partition <input file>.dfa (show sets of equivalent states)" << std::endl;
+		std::cout << " * optimize <input file>.dfa <output file>.dfa (DFA optimization)" << std::endl;
+		std::cout << " * equivalent <input file A>.dfa <input file B>.dfa (DFA equivalence)" << std::endl;
 		return 0;
 	}
 
@@ -116,7 +115,7 @@ int main(int argc, const char* argv[])
 		auto dfa = nfa.ToDFAutomaton();
 
 		auto setRenamer = Automata::LambdaFunction<LinearSet<State>, State>(NameSets);
-		auto charRenamer = Automata::LambdaFunction<Symbol, Symbol>(id<Symbol>);
+		IdFunction<Symbol> charRenamer;
 
 		auto renamedDfa = dfa.Rename(&setRenamer, &charRenamer);
 
@@ -133,7 +132,7 @@ int main(int argc, const char* argv[])
 		auto dfa = enfa.ToDFAutomaton();
 
 		auto setRenamer = Automata::LambdaFunction<LinearSet<State>, State>(NameSets);
-		auto charRenamer = Automata::LambdaFunction<Symbol, Symbol>(id<Symbol>);
+		IdFunction<Symbol> charRenamer;
 
 		auto renamedDfa = dfa.Rename(&setRenamer, &charRenamer);
 
@@ -149,12 +148,12 @@ int main(int argc, const char* argv[])
 
 		auto regex = regexParser.ParseRegex();
 		input.close();
-		
+
 		auto enfa = regex->ToENFAutomaton();
 
 		std::unordered_map<std::shared_ptr<RegexState>, int> names;
 		auto setRenamer = Automata::LambdaFunction<std::shared_ptr<RegexState>, State>([&](std::shared_ptr<RegexState> state) { return NameRegexState(state, names); });
-		auto charRenamer = Automata::LambdaFunction<Symbol, Symbol>(id<Symbol>);
+		IdFunction<Symbol> charRenamer;
 
 		auto renamedEnfa = enfa.Rename<State, Symbol>(&setRenamer, &charRenamer);
 
@@ -168,15 +167,56 @@ int main(int argc, const char* argv[])
 	{
 		auto dfa = parser.ReadDFAutomaton(input);
 		input.close();
-		
+
 		auto regex = DFAtoRE(dfa);
-		
+
 		std::ofstream output(argv[3]);
 
 		output << "Regex:\n";
 		output << regex->ToString();
-		
+
 		output.close();
+	}
+	else if (std::string(argv[1]) == "partition")
+	{
+		auto dfa = parser.ReadDFAutomaton(input);
+		std::cout << "The following sets of states are equivalent:" << std::endl;
+		std::set<State> uniqueEntries;
+		for (auto &item : dfa.TFAPartition())
+			uniqueEntries.insert(NameSets(item.second));
+		for (auto s : uniqueEntries)
+			std::cout << "- " << s << std::endl;
+	}
+	else if (std::string(argv[1]) == "optimize")
+	{
+		auto dfa = parser.ReadDFAutomaton(input);
+		auto newDfa = dfa.Optimize();
+
+		auto setRenamer = Automata::LambdaFunction<LinearSet<State>, State>(NameSets);
+		IdFunction<Symbol> charRenamer;
+
+		auto renamedDfa = newDfa.Rename(&setRenamer, &charRenamer);
+
+		std::ofstream output(argv[3]);
+
+		parser.Write(renamedDfa, output);
+
+		output.close();
+	}
+	else if (std::string(argv[1]) == "equivalent")
+	{
+		std::ifstream input2(argv[3]);
+		if (!input2)
+		{
+			std::cout << "Input file '" << argv[3] << "' could not be opened." << std::endl;
+			return 0;
+		}
+
+		auto dfa1 = parser.ReadDFAutomaton(input);
+		auto dfa2 = parser.ReadDFAutomaton(input2);
+		std::cout << "The given automata are ";
+		if (!dfa1.EquivalentTo(dfa2)) std::cout << "not ";
+		std::cout << "equivalent." << std::endl;
 	}
 	else
 	{
@@ -187,7 +227,7 @@ int main(int argc, const char* argv[])
 		{
 			parsedString.push_back(std::string(1, item));
 		}
-		
+
 		if (automaton->Accepts(parsedString))
 		{
 			std::cout << "The automaton accepts the given string." << std::endl;
@@ -200,4 +240,3 @@ int main(int argc, const char* argv[])
 
 	return 0;
 }
-

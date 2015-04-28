@@ -1,20 +1,22 @@
+#include "UnionRegex.h"
+
 #include <memory>
 #include <string>
 #include <utility>
-#include "IRegex.h"
 #include "ENFAutomaton.h"
+#include "IRegex.h"
+#include "LinearSet.h"
+#include "Optional.h"
 #include "RegexState.h"
 #include "TransitionTable.h"
-#include "Optional.h"
-#include "LinearSet.h"
-#include "UnionRegex.h"
 #include "HashExtensions.h"
 
 using namespace Automata;
 
-std::string UnionRegex::ToString() const
+UnionRegex::UnionRegex(std::shared_ptr<IRegex> Left, std::shared_ptr<IRegex> Right)
 {
-    return this->Left->ToString() + "+" + this->Right->ToString();
+    this->Left = Left;
+    this->Right = Right;
 }
 
 ENFAutomaton<std::shared_ptr<RegexState>, std::string> UnionRegex::ToENFAutomaton() const
@@ -35,8 +37,7 @@ ENFAutomaton<std::shared_ptr<RegexState>, std::string> UnionRegex::ToENFAutomato
     return ENFAutomaton<std::shared_ptr<RegexState>, std::string>(startState, acceptingStates, transTable);
 }
 
-UnionRegex::UnionRegex(std::shared_ptr<IRegex> Left, std::shared_ptr<IRegex> Right)
+std::string UnionRegex::ToString() const
 {
-    this->Left = Left;
-    this->Right = Right;
+    return this->Left->ToString() + "+" + this->Right->ToString();
 }

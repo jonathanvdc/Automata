@@ -3,8 +3,8 @@
 template<typename T>
 struct Optional
 {
-    Optional(T Value);
     Optional();
+    Optional(T Value);
 
     bool operator==(Optional<T> Other) const;
 
@@ -14,7 +14,7 @@ struct Optional
 
     bool operator!=(T Other) const;
 
-    bool HasValue;
+    bool HasValue = false;
     T Value;
 };
 

@@ -15,14 +15,18 @@ public struct LinearSet<T>
     {
         this.vals = new vector<T>(Values);
     }
-    
+    public const this(T Value)
+    {
+        this.vals.push_back(Value);
+    }
+
     private vector<T> vals;
-    
+
     public vector<T> Items { const get return vals; }
-    
+
     public int Count { const get return (int)vals.size(); }
     public bool IsEmpty { const get return Count == 0; }
-    
+
     public const bool Contains(T Value)
     {
         foreach (var item in vals)
@@ -41,7 +45,7 @@ public struct LinearSet<T>
         }
         return true;
     }
-    
+
     public void Add(T Value)
     {
         if (!Contains(Value))
@@ -56,14 +60,24 @@ public struct LinearSet<T>
             Add(item);
         }
     }
-    
+
     public T Last { const get return vals[Count - 1]; }
-    
+
     public void RemoveLast()
     {
         vals.pop_back();
     }
-    
+
+    /// <summary>
+    /// Removes the last element from the linear set and returns it.
+    /// </summary>
+    public T Pop()
+    {
+        var elem = Last;
+        RemoveLast();
+        return elem;
+    }
+
     public const LinearSet<T> Union(LinearSet<T> Other)
     {
         LinearSet<T> copy = this;
@@ -89,7 +103,7 @@ public struct LinearSet<T>
         }
         return result;
     }
-    
+
     public const bool operator==(LinearSet<T> Other)
     {
         return this.ContainsAll(Other) && Other.ContainsAll(this);

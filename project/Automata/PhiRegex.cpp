@@ -1,21 +1,20 @@
-#include <string>
+#include "PhiRegex.h"
+
 #include <memory>
+#include <string>
 #include <utility>
 #include "ENFAutomaton.h"
-#include "RegexState.h"
-#include "LinearSet.h"
-#include "TransitionTable.h"
-#include "Optional.h"
 #include "IRegex.h"
-#include "PhiRegex.h"
+#include "LinearSet.h"
+#include "Optional.h"
+#include "RegexState.h"
+#include "TransitionTable.h"
 #include "HashExtensions.h"
 
 using namespace Automata;
 
-std::string PhiRegex::ToString() const
-{
-    return "\\p";
-}
+PhiRegex::PhiRegex()
+{ }
 
 ENFAutomaton<std::shared_ptr<RegexState>, std::string> PhiRegex::ToENFAutomaton() const
 {
@@ -25,5 +24,7 @@ ENFAutomaton<std::shared_ptr<RegexState>, std::string> PhiRegex::ToENFAutomaton(
     return ENFAutomaton<std::shared_ptr<RegexState>, std::string>(startState, acceptingStates, transTable);
 }
 
-PhiRegex::PhiRegex()
-{ }
+std::string PhiRegex::ToString() const
+{
+    return "\\p";
+}

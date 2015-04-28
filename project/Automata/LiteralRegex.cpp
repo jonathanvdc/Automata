@@ -1,21 +1,22 @@
-#include <string>
+#include "LiteralRegex.h"
+
 #include <memory>
+#include <string>
 #include <unordered_map>
 #include <utility>
 #include "ENFAutomaton.h"
-#include "RegexState.h"
+#include "IRegex.h"
 #include "LinearSet.h"
 #include "Optional.h"
+#include "RegexState.h"
 #include "TransitionTable.h"
-#include "IRegex.h"
-#include "LiteralRegex.h"
 #include "HashExtensions.h"
 
 using namespace Automata;
 
-std::string LiteralRegex::ToString() const
+LiteralRegex::LiteralRegex(std::string Literal)
 {
-    return this->Literal;
+    this->Literal = Literal;
 }
 
 ENFAutomaton<std::shared_ptr<RegexState>, std::string> LiteralRegex::ToENFAutomaton() const
@@ -30,7 +31,7 @@ ENFAutomaton<std::shared_ptr<RegexState>, std::string> LiteralRegex::ToENFAutoma
     return ENFAutomaton<std::shared_ptr<RegexState>, std::string>(startState, acceptingStates, transTable);
 }
 
-LiteralRegex::LiteralRegex(std::string Value)
+std::string LiteralRegex::ToString() const
 {
-	this->Literal = Value;
+    return this->Literal;
 }
