@@ -6,6 +6,7 @@
 #include <algorithm>
 
 #include "DFAutomaton.h"
+#include "NFAutomaton.h"
 
 #include "RegexState.h"
 #include "IRegex.h"
@@ -81,6 +82,31 @@ public:
 		startState = DFA.getStartState();
 		
 		for( State state : DFA.getAcceptingStates().getItems()){
+			acceptStates.push_back(state);
+		}
+	}
+	
+	REAutomaton( NFAutomaton<std::string, std::string>& NFA ){	// Create an REAutomaton that mirrors an existing NFA
+		
+		for( State from: NFA.GetStates().getItems()){
+			for( State to: NFA.GetStates().getItems()){
+				transitionMap[from][to] = std::make_shared<PhiRegex>();
+			}
+		}
+		
+		for( State state : NFA.GetStates().getItems()){
+			states.push_back(state);
+			for( Char trans: NFA.GetAlphabet().getItems()){
+				if(!(NFA.PerformTransition(state, trans).getIsEmpty())){
+					for( auto toState : NFA.PerformTransition(state, trans).getItems())
+					this->addTransition(state, toState, std::make_shared<LiteralRegex>(trans));
+				}
+			}
+		}
+		
+		startState = NFA.getStartState();
+		
+		for( State state : NFA.getAcceptingStates().getItems()){
 			acceptStates.push_back(state);
 		}
 	}
@@ -174,6 +200,16 @@ public:
 std::shared_ptr<IRegex> DFAtoRE(DFAutomaton<std::string, std::string>& DFA){
 	
 	REAutomaton REA( DFA );
+	
+	auto pointer = REA.toRE();
+	
+	return pointer;
+
+}
+
+std::shared_ptr<IRegex> NFAtoRE(NFAutomaton<std::string, std::string>& NFA){
+	
+	REAutomaton REA( NFA );
 	
 	auto pointer = REA.toRE();
 	

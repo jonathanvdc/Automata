@@ -75,6 +75,7 @@ int main(int argc, const char* argv[])
 		std::cout << " * dot <input file>.dfa <target file>.dot (gets a dot language representation)" << std::endl;
 		std::cout << " * re2enfa <input file>.re <target file>.enfa (regex->e-NFA conversion)" << std::endl;
 		std::cout << " * dfa2re <input file>.dfa <target file>.re (DFA->regex conversion)" << std::endl;
+		std::cout << " * nfa2re <input file>.nfa <target file>.re (NFA->regex conversion)" << std::endl;
 		return 0;
 	}
 
@@ -164,12 +165,26 @@ int main(int argc, const char* argv[])
 
 		output.close();
 	}
-	else if (std::string(argv[1]) == "dfa2re")		// Sibert werkt hier
+	else if (std::string(argv[1]) == "dfa2re")
 	{
 		auto dfa = parser.ReadDFAutomaton(input);
 		input.close();
 		
 		auto regex = DFAtoRE(dfa);
+		
+		std::ofstream output(argv[3]);
+
+		output << "Regex:\n";
+		output << regex->ToString();
+		
+		output.close();
+	}
+	else if (std::string(argv[1]) == "nfa2re")
+	{
+		auto nfa = parser.ReadNFAutomaton(input);
+		input.close();
+		
+		auto regex = NFAtoRE(nfa);
 		
 		std::ofstream output(argv[3]);
 
