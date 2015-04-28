@@ -71,6 +71,7 @@ int main(int argc, const char* argv[])
 		std::cout << " * dot <input file>.dfa <target file>.dot (gets a dot language representation)" << std::endl;
 		std::cout << " * re2enfa <input file>.re <target file>.enfa (regex->e-NFA conversion)" << std::endl;
 		std::cout << " * dfa2re <input file>.dfa <target file>.re (DFA->regex conversion)" << std::endl;
+		std::cout << " * nfa2re <input file>.nfa <target file>.re (NFA->regex conversion)" << std::endl;
 		std::cout << " * partition <input file>.dfa (show sets of equivalent states)" << std::endl;
 		std::cout << " * optimize <input file>.dfa <output file>.dfa (DFA optimization)" << std::endl;
 		std::cout << " * equivalent <input file A>.dfa <input file B>.dfa (DFA equivalence)" << std::endl;
@@ -163,7 +164,7 @@ int main(int argc, const char* argv[])
 
 		output.close();
 	}
-	else if (std::string(argv[1]) == "dfa2re")		// Sibert werkt hier
+	else if (std::string(argv[1]) == "dfa2re")
 	{
 		auto dfa = parser.ReadDFAutomaton(input);
 		input.close();
@@ -217,6 +218,20 @@ int main(int argc, const char* argv[])
 		std::cout << "The given automata are ";
 		if (!dfa1.EquivalentTo(dfa2)) std::cout << "not ";
 		std::cout << "equivalent." << std::endl;
+	}
+	else if (std::string(argv[1]) == "nfa2re")
+	{
+		auto nfa = parser.ReadNFAutomaton(input);
+		input.close();
+
+		auto regex = NFAtoRE(nfa);
+
+		std::ofstream output(argv[3]);
+
+		output << "Regex:\n";
+		output << regex->ToString();
+
+		output.close();
 	}
 	else
 	{
