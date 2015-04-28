@@ -1,21 +1,23 @@
-#include "ClosureRegex.h"
-
 #include <memory>
 #include <string>
 #include <utility>
-#include "ENFAutomaton.h"
 #include "IRegex.h"
-#include "LinearSet.h"
-#include "Optional.h"
+#include "ENFAutomaton.h"
 #include "RegexState.h"
 #include "TransitionTable.h"
+#include "Optional.h"
+#include "LinearSet.h"
+#include "ClosureRegex.h"
 #include "HashExtensions.h"
 
 using namespace Automata;
 
-ClosureRegex::ClosureRegex(std::shared_ptr<IRegex> Regex)
+std::string ClosureRegex::ToString() const
 {
-    this->Regex = Regex;
+	if( this->Regex->ToString().size() == 1){
+		return this->Regex->ToString() + "*";
+	}
+    return "(" + this->Regex->ToString() + ")*";
 }
 
 ENFAutomaton<std::shared_ptr<RegexState>, std::string> ClosureRegex::ToENFAutomaton() const
@@ -41,7 +43,7 @@ ENFAutomaton<std::shared_ptr<RegexState>, std::string> ClosureRegex::ToENFAutoma
     return ENFAutomaton<std::shared_ptr<RegexState>, std::string>(startState, acceptingStates, transTable);
 }
 
-std::string ClosureRegex::ToString() const
+ClosureRegex::ClosureRegex(std::shared_ptr<IRegex> Regex)
 {
-    return "(" + this->Regex->ToString() + ")*";
+    this->Regex = Regex;
 }

@@ -9,7 +9,7 @@ namespace std
 	template<typename T, typename V>
 	struct hash<std::pair<T, V>>
 	{
-		size_t operator()(const std::pair<T, V>& Value) const
+		size_t operator() (const std::pair<T, V>& Value) const
 		{
 			return hash<T>()(Value.first) ^ hash<V>()(Value.second);
 		}

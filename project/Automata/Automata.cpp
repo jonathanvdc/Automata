@@ -20,6 +20,8 @@
 #include "AutomatonDotPrinter.h"
 #include "RegexParser.h"
 
+#include "DFAtoRE.h"
+
 typedef std::string State;
 typedef std::string Symbol;
 
@@ -68,6 +70,8 @@ int main(int argc, const char* argv[])
 		std::cout << " * accepts <input file> <string> (test a string)" << std::endl;
 		std::cout << " * dot <input file>.dfa <target file>.dot (gets a dot language representation)" << std::endl;
 		std::cout << " * re2enfa <input file>.re <target file>.enfa (regex->e-NFA conversion)" << std::endl;
+		std::cout << " * dfa2re <input file>.dfa <target file>.re (DFA->regex conversion)" << std::endl;
+		std::cout << " * nfa2re <input file>.nfa <target file>.re (NFA->regex conversion)" << std::endl;
 		std::cout << " * partition <input file>.dfa (show sets of equivalent states)" << std::endl;
 		std::cout << " * optimize <input file>.dfa <output file>.dfa (DFA optimization)" << std::endl;
 		std::cout << " * equivalent <input file A>.dfa <input file B>.dfa (DFA equivalence)" << std::endl;
@@ -145,7 +149,7 @@ int main(int argc, const char* argv[])
 
 		auto regex = regexParser.ParseRegex();
 		input.close();
-		
+
 		auto enfa = regex->ToENFAutomaton();
 
 		std::unordered_map<std::shared_ptr<RegexState>, int> names;
@@ -157,6 +161,20 @@ int main(int argc, const char* argv[])
 		std::ofstream output(argv[3]);
 
 		parser.Write(renamedEnfa, output);
+
+		output.close();
+	}
+	else if (std::string(argv[1]) == "dfa2re")
+	{
+		auto dfa = parser.ReadDFAutomaton(input);
+		input.close();
+
+		auto regex = DFAtoRE(dfa);
+
+		std::ofstream output(argv[3]);
+
+		output << "Regex:\n";
+		output << regex->ToString();
 
 		output.close();
 	}
@@ -201,6 +219,20 @@ int main(int argc, const char* argv[])
 		if (!dfa1.EquivalentTo(dfa2)) std::cout << "not ";
 		std::cout << "equivalent." << std::endl;
 	}
+	else if (std::string(argv[1]) == "nfa2re")
+	{
+		auto nfa = parser.ReadNFAutomaton(input);
+		input.close();
+
+		auto regex = NFAtoRE(nfa);
+
+		std::ofstream output(argv[3]);
+
+		output << "Regex:\n";
+		output << regex->ToString();
+
+		output.close();
+	}
 	else
 	{
 		auto automaton = parser.ReadAutomaton(input);
@@ -210,7 +242,7 @@ int main(int argc, const char* argv[])
 		{
 			parsedString.push_back(std::string(1, item));
 		}
-		
+
 		if (automaton->Accepts(parsedString))
 		{
 			std::cout << "The automaton accepts the given string." << std::endl;
@@ -223,4 +255,3 @@ int main(int argc, const char* argv[])
 
 	return 0;
 }
-

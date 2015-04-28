@@ -2,6 +2,9 @@
 #include <istream>
 #include <string>
 
+std::istream& operator>>(std::istream& Stream, char& Target) { Stream.get(Target); return Stream; }
+
+
 std::shared_ptr<IRegex> RegexParser::ParseSimpleRegex(char val)
 {
 	if (val == '\\')
@@ -35,7 +38,7 @@ std::shared_ptr<IRegex> RegexParser::ParseRegex(char val)
 
 	*this->data >> val;
 
-	if (!*this->data) { return first; } // Nec plus ultra
+	if (!(*this->data)) { return first; } // Nec plus ultra
 
 	if (val == '*')
 	{
