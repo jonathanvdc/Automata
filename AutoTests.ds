@@ -180,7 +180,7 @@ namespace Automata
             }
         }
 
-        private const int GetOptionalClampedInt32(string[] Args, int Index, int Default, int Max, string Name)
+        private const int GetOptionalClampedInt32(int Index, int Default, int Max, string[] Args, string Name)
         {
             int val = GetOptionalInt32(Args, Index, Default);
             if (val > Max)
@@ -216,8 +216,8 @@ namespace Automata
 
             if (createOnly)
             {
-                int maxAlphabetLength = GetOptionalClampedInt32(Args, 2, 5, 26, "alphabet size");
-                int maxStates = GetOptionalClampedInt32(Args, 3, 10, 26, "state count");
+                int maxAlphabetLength = GetOptionalClampedInt32(2, 5, 26, Args, "alphabet size");
+                int maxStates = GetOptionalClampedInt32(3, 10, 26, Args, "state count");
 
                 var alpha = GenerateAlphabet(rand, maxAlphabetLength);
                 Console.WriteLine(GenerateNFA(rand, alpha, maxStates, allowEpsilon));
@@ -231,8 +231,8 @@ namespace Automata
                 string appPath = Args[2];
                 int testCount = GetOptionalInt32(Args, 3, 15);
                 int stringTestCount = GetOptionalInt32(Args, 4, 15);
-                int maxAlphabetLength = GetOptionalClampedInt32(Args, 5, 5, 26, "alphabet size");
-                int maxStates = GetOptionalClampedInt32(Args, 6, 10, 26, "state count");
+                int maxAlphabetLength = GetOptionalClampedInt32(5, 5, 26, Args, "alphabet size");
+                int maxStates = GetOptionalClampedInt32(6, 10, 26, Args, "state count");
                 int maxStringLength = GetOptionalInt32(Args, 7, 5);
 
                 int nonTrivialCount = 0;
