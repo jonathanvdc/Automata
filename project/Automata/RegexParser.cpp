@@ -43,8 +43,7 @@ std::shared_ptr<IRegex> RegexParser::ParseRegex(char val)
 	if (val == '*')
 	{
 		auto closure = std::make_shared<ClosureRegex>(first);
-		*this->data >> val;
-		if (!*this->data) { return closure; }
+		if (!this->data->get(val)) { return closure; }
 		auto next = ParseRegex(val);
 		return std::make_shared<ConcatRegex>(closure, next);
 	}

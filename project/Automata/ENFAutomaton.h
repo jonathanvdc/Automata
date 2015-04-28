@@ -68,7 +68,6 @@ namespace Automata
                 }
                 else
                 {
-                    std::unordered_map<std::pair<TNState, Optional<TNChar>>, LinearSet<TNState>> newTransMap;
                     newTransMap[std::pair<TNState, Optional<TNChar>>(renamedOriginState, Optional<TNChar>())] = renamedTargetStates;
                 }
             }
