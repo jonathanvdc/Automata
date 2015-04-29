@@ -19,5 +19,6 @@ public:
 private:
 	std::istream* data;
 	std::shared_ptr<IRegex> ParseSimpleRegex(char Value);
+	std::shared_ptr<IRegex> ParsePrimaryRegex(char Value);
 	std::shared_ptr<IRegex> ParseRegex(char Value);
 };

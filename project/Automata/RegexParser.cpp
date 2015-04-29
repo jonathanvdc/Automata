@@ -23,7 +23,7 @@ std::shared_ptr<IRegex> RegexParser::ParseSimpleRegex(char val)
 	return std::make_shared<LiteralRegex>(str);
 }
 
-std::shared_ptr<IRegex> RegexParser::ParseRegex(char val)
+std::shared_ptr<IRegex> RegexParser::ParsePrimaryRegex(char val)
 {
 	std::shared_ptr<IRegex> first;
 
@@ -36,26 +36,42 @@ std::shared_ptr<IRegex> RegexParser::ParseRegex(char val)
 		first = ParseSimpleRegex(val);
 	}
 
-	*this->data >> val;
-
-	if (!(*this->data)) { return first; } // Nec plus ultra
+	if (!this->data->get(val)) { return first; } // We're done here
 
 	if (val == '*')
 	{
 		auto closure = std::make_shared<ClosureRegex>(first);
 		if (!this->data->get(val)) { return closure; }
-		auto next = ParseRegex(val);
+		else if (val == ')' || val == '+')
+		{
+			this->data->putback(val);
+			return closure;
+		}
+		auto next = ParsePrimaryRegex(val);
 		return std::make_shared<ConcatRegex>(closure, next);
 	}
-	else if (val == '+')
+	else if (val != ')' && val != '+')
+	{
+		auto second = ParsePrimaryRegex(val);
+		return std::make_shared<ConcatRegex>(first, second);
+	}
+	else // These don't belong to us.
+	{
+		this->data->putback(val);
+		return first;
+	}
+}
+
+std::shared_ptr<IRegex> RegexParser::ParseRegex(char val)
+{
+	std::shared_ptr<IRegex> first = ParsePrimaryRegex(val);
+
+	if (!this->data->get(val)) { return first; } // Nec plus ultra
+
+	if (val == '+')
 	{
 		auto second = ParseRegex();
 		return std::make_shared<UnionRegex>(first, second);
-	}
-	else if (val != ')')
-	{
-		auto second = ParseRegex(val);
-		return std::make_shared<ConcatRegex>(first, second);
 	}
 	else
 	{
