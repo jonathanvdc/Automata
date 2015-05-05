@@ -33,24 +33,25 @@ namespace Automata
             }
             sb.AppendLine();
 
-            int transCount = rand.Next(0, 2 * states.Length * alpha.Length);
             sb.AppendLine("transitions");
 
-            for (int i = 0; i < transCount; i++)
+            var trans = AutoTests.GenerateTransitions(rand, AllowEpsilon, states, alpha);
+
+            foreach (var item in trans)
             {
-                char fromState = AutoTests.GetRandomElement<char>(states, rand);
-                char toState = AutoTests.GetRandomElement<char>(states, rand);
-
-                string transName;
-                if (AllowEpsilon && rand.Next(0, 3) == 0)
+                sb.Append(item.Item1);
+                sb.Append(" ");
+                if (item.Item2 == '\0')
                 {
-                    transName = "->";
+                    sb.Append("->");
                 }
-                else transName = (string)AutoTests.GetRandomElement<char>(alpha, rand);
-
-                sb.Append(fromState);
-                sb.Append(' ').Append(transName).Append(' ');
-                sb.Append(toState).AppendLine();
+                else
+                {
+                    sb.Append(item.Item2);
+                }
+                sb.Append(" ");
+                sb.Append(item.Item3);
+                sb.AppendLine();
             }
 
             return (string)sb;

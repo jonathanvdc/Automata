@@ -93,29 +93,22 @@ namespace Automata
             AppendIndentedLine(sb, "invStart -> \"" + startState + "\";");
             sb.AppendLine();
 
-            int transCount = rand.Next(0, 2 * states.Length * alpha.Length);
+            var trans = AutoTests.GenerateTransitions(rand, AllowEpsilon, states, alpha);
 
-            for (int i = 0; i < transCount; i++)
+            foreach (var item in trans)
             {
-                char fromState = AutoTests.GetRandomElement<char>(states, rand);
-                char toState = AutoTests.GetRandomElement<char>(states, rand);
-
-                string transName;
-                if (AllowEpsilon && rand.Next(0, 3) == 0)
-                {
-                    transName = "E";
-                }
-                else transName = (string)AutoTests.GetRandomElement<char>(alpha, rand);
-
                 sb.Append("    ");
                 sb.Append('"');
-                sb.Append(fromState);
+                sb.Append(item.Item1);
                 sb.Append('"');
                 sb.Append(" -> ");
                 sb.Append('"');
-                sb.Append(toState);
+                sb.Append(item.Item3);
                 sb.Append("\" [label = \"");
-                sb.Append(transName);
+                if (item.Item2 != '\0')
+                {
+                    sb.Append(item.Item2);
+                }
                 sb.Append("\"];");
                 sb.AppendLine();
             }

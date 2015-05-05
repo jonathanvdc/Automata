@@ -233,6 +233,30 @@ namespace Automata
             Console.WriteLine(" - time spent emulating dfas: " + dfaTime.Elapsed);
         }
 
+        public static HashSet<Tuple<char, char, char>> GenerateTransitions(Random rand, bool AllowEpsilon, char[] States, char[] Alpha)
+        {
+            var results = new HashSet<Tuple<char, char, char>>();
+
+            int transCount = rand.Next(0, 2 * States.Length * Alpha.Length);
+
+            for (int i = 0; i < transCount; i++)
+            {
+                char fromState = GetRandomElement<char>(States, rand);
+                char toState = GetRandomElement<char>(States, rand);
+
+                char transName;
+                if (AllowEpsilon && rand.Next(0, 3) == 0)
+                {
+                    transName = '\0';
+                }
+                else transName = AutoTests.GetRandomElement<char>(Alpha, rand);
+
+                results.Add(new Tuple<char, char, char>(fromState, transName, toState));
+            }
+
+            return results;
+        }
+
         public void Main(string[] Args)
         {
             if (Args.Length < 2)
@@ -256,7 +280,7 @@ namespace Automata
 
             bool isRegex = Args[1].Trim(null).ToLower().Equals("regex");
 
-            var automGen = GraphvizAutomatonGenerator;
+            var automGen = SuperiorAutomatonGenerator;
 
             if (isRegex)
             {
