@@ -16,5 +16,6 @@
     <Compile Include="IAutomatonGenerator.ds" />
     <Compile Include="SuperiorAutomatonGenerator.ds" />
     <Compile Include="XmlAutomatonGenerator.ds" />
+    <Compile Include="GraphvizAutomatonGenerator.ds" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,128 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Linq;
+
+namespace Automata
+{
+    public static class GraphvizAutomatonGenerator : IAutomatonGenerator
+    {
+        private void WriteArray(StringBuilder sb, string TagName, [char] Values)
+        {
+            sb.Append(TagName);
+            sb.Append(" = \"");
+            bool isFirst = true;
+            foreach (var item in Values)
+            {
+                if (isFirst) isFirst = false;
+                else sb.Append(" ");
+
+                sb.Append(item);
+            }
+            sb.Append("\";");
+            AppendIndentedLine(sb);
+        }
+
+        private void WriteStateArray(StringBuilder sb, string TagName, [char] Values)
+        {
+            if (!Enumerable.Any<char>(Values))
+            {
+                return;
+            }
+
+            AppendIndentedLine(sb, "node [shape = " + TagName + "];");
+            bool isFirst = true;
+            foreach (var item in Values)
+            {
+                if (isFirst) isFirst = false;
+                else sb.Append(" ");
+
+                sb.Append('"');
+                sb.Append(item);
+                sb.Append('"');
+            }
+            sb.Append(";");
+            AppendIndentedLine(sb);
+        }
+
+        private void AppendIndentedLine(StringBuilder sb)
+        {
+            sb.AppendLine();
+            sb.Append("    ");
+        }
+
+        private void AppendIndentedLine(StringBuilder sb, string Text)
+        {
+            sb.AppendLine(Text);
+            sb.Append("    ");
+        }
+
+        public string GenerateNFA(Random rand, char[] alpha, int maxStates, bool AllowEpsilon)
+        {
+            var states = AutoTests.GenerateStates(rand, maxStates);
+
+            var sb = new StringBuilder();
+
+            AppendIndentedLine(sb, "digraph graph1 {");
+
+            if (AllowEpsilon)
+                AppendIndentedLine(sb, "type = \"ENFA\";");
+            else
+                AppendIndentedLine(sb, "type = \"NFA\";");
+
+            AppendIndentedLine(sb);
+            WriteArray(sb, "alphabet", alpha);
+            AppendIndentedLine(sb);
+            var startState = AutoTests.GetRandomElement<char>(states, rand);
+            WriteArray(sb, "start", new char[] { startState });
+            AppendIndentedLine(sb);
+
+            int acceptCount = rand.Next(0, states.Length);
+            var accepted = new HashSet<char>();
+            for (int i = 0; i < acceptCount; i++)
+            {
+                accepted.Add(AutoTests.GetRandomElement<char>(states, rand));
+            }
+
+            WriteStateArray(sb, "circle", Enumerable.Except<char>(states, accepted));
+            AppendIndentedLine(sb);
+            WriteStateArray(sb, "doublecircle", accepted);
+            AppendIndentedLine(sb);
+
+            AppendIndentedLine(sb, "invStart [style = invis];");
+            AppendIndentedLine(sb, "invStart -> \"" + startState + "\";");
+            sb.AppendLine();
+
+            int transCount = rand.Next(0, 2 * states.Length * alpha.Length);
+
+            for (int i = 0; i < transCount; i++)
+            {
+                char fromState = AutoTests.GetRandomElement<char>(states, rand);
+                char toState = AutoTests.GetRandomElement<char>(states, rand);
+
+                string transName;
+                if (AllowEpsilon && rand.Next(0, 3) == 0)
+                {
+                    transName = "E";
+                }
+                else transName = (string)AutoTests.GetRandomElement<char>(alpha, rand);
+
+                sb.Append("    ");
+                sb.Append('"');
+                sb.Append(fromState);
+                sb.Append('"');
+                sb.Append(" -> ");
+                sb.Append('"');
+                sb.Append(toState);
+                sb.Append("\" [label = \"");
+                sb.Append(transName);
+                sb.Append("\"];");
+                sb.AppendLine();
+            }
+
+            sb.AppendLine("}");
+
+            return (string)sb;
+        }
+    }
+}

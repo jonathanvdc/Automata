@@ -256,7 +256,7 @@ namespace Automata
 
             bool isRegex = Args[1].Trim(null).ToLower().Equals("regex");
 
-            var automGen = XmlAutomatonGenerator;
+            var automGen = GraphvizAutomatonGenerator;
 
             if (isRegex)
             {
