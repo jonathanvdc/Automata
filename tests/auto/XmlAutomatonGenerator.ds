@@ -1,0 +1,67 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Automata
+{
+    public static class XmlAutomatonGenerator : IAutomatonGenerator
+    {
+        public const string GenerateNFA(Random rand, char[] alpha, int maxStates, bool AllowEpsilon)
+        {
+            var states = AutoTests.GenerateStates(rand, maxStates);
+
+            var sb = new StringBuilder();
+
+            if (AllowEpsilon)
+                sb.AppendLine("<TYPE>enfa</TYPE>");
+            else
+                sb.AppendLine("<TYPE>nfa</TYPE>");
+
+            sb.Append("<STATES>");
+            for (int i = 0; i < states.Length; i++)
+            {
+                if (i > 0) sb.Append(",");
+                sb.Append(states[i]);
+            }
+            sb.Append("</STATES>");
+            sb.AppendLine();
+
+            sb.AppendLine("start " + AutoTests.GetRandomElement<char>(states, rand));
+            sb.Append("accepts");
+            int acceptCount = rand.Next(0, states.Length);
+            var accepted = new HashSet<char>();
+            for (int i = 0; i < acceptCount; i++)
+            {
+                accepted.Add(AutoTests.GetRandomElement<char>(states, rand));
+            }
+            foreach (var item in accepted)
+            {
+                sb.Append(' ');
+                sb.Append(item);
+            }
+            sb.AppendLine();
+
+            int transCount = rand.Next(0, 2 * states.Length * alpha.Length);
+            sb.AppendLine("transitions");
+
+            for (int i = 0; i < transCount; i++)
+            {
+                char fromState = AutoTests.GetRandomElement<char>(states, rand);
+                char toState = AutoTests.GetRandomElement<char>(states, rand);
+
+                string transName;
+                if (AllowEpsilon && rand.Next(0, 3) == 0)
+                {
+                    transName = "->";
+                }
+                else transName = (string)AutoTests.GetRandomElement<char>(alpha, rand);
+
+                sb.Append(fromState);
+                sb.Append(' ').Append(transName).Append(' ');
+                sb.Append(toState).AppendLine();
+            }
+
+            return (string)sb;
+        }
+    }
+}

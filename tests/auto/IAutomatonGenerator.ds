@@ -1,0 +1,6 @@
+using System;
+
+public interface IAutomatonGenerator
+{
+    string GenerateNFA(Random rand, char[] alpha, int maxStates, bool AllowEpsilon);
+}

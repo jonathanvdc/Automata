@@ -56,59 +56,10 @@ namespace Automata
             return Values[rand.Next(Values.Length)];
         }
 
-        public const string GenerateNFA(Random rand, char[] alpha, int maxStates, bool AllowEpsilon)
-        {
-            var states = GenerateStates(rand, maxStates);
-
-            var sb = new StringBuilder();
-
-            if (AllowEpsilon)
-                sb.AppendLine("enfa");
-            else
-                sb.AppendLine("nfa");
-
-            sb.AppendLine("start " + GetRandomElement<char>(states, rand));
-            sb.Append("accepts");
-            int acceptCount = rand.Next(0, states.Length);
-            var accepted = new HashSet<char>();
-            for (int i = 0; i < acceptCount; i++)
-            {
-                accepted.Add(GetRandomElement<char>(states, rand));
-            }
-            foreach (var item in accepted)
-            {
-                sb.Append(' ');
-                sb.Append(item);
-            }
-            sb.AppendLine();
-
-            int transCount = rand.Next(0, 2 * states.Length * alpha.Length);
-            sb.AppendLine("transitions");
-
-            for (int i = 0; i < transCount; i++)
-            {
-                char fromState = GetRandomElement<char>(states, rand);
-                char toState = GetRandomElement<char>(states, rand);
-
-                string transName;
-                if (AllowEpsilon && rand.Next(0, 3) == 0)
-                {
-                    transName = "->";
-                }
-                else transName = (string)GetRandomElement<char>(alpha, rand);
-
-                sb.Append(fromState);
-                sb.Append(' ').Append(transName).Append(' ');
-                sb.Append(toState).AppendLine();
-            }
-
-            return (string)sb;
-        }
-
         // Adapted from http://www.codeproject.com/Articles/79620/Run-console-application-from-a-NET-application
         public string RunCmd(string Name, string[] commands)
         {
-            ProcessStartInfo info = new ProcessStartInfo(Name);
+            var info = new ProcessStartInfo(Name);
             var sb = new StringBuilder();
             foreach (var command in commands)
             {
@@ -122,7 +73,10 @@ namespace Automata
             info.RedirectStandardError = true;
             info.CreateNoWindow = true;
 
-            Process process = Process.Start(info);
+
+            var process = new Process();
+            process.StartInfo = info;
+            process.Start();
 
             StreamWriter sw = process.StandardInput;
             StreamReader sr = process.StandardOutput;
@@ -191,7 +145,7 @@ namespace Automata
             return val;
         }
 
-        public void TestAutomata(string[] Args, bool AllowEpsilon, Random rand)
+        public void TestAutomata(string[] Args, bool AllowEpsilon, Random rand, IAutomatonGenerator AutomGen)
         {
             var nfaTime = new Stopwatch();
             var sscTime = new Stopwatch();
@@ -210,7 +164,7 @@ namespace Automata
             {
                 var alpha = GenerateAlphabet(rand, maxAlphabetLength);
                 Console.WriteLine("Generating automaton...");
-                var genNfa = GenerateNFA(rand, alpha, maxStates, AllowEpsilon);
+                var genNfa = AutomGen.GenerateNFA(rand, alpha, maxStates, AllowEpsilon);
                 WriteTo(genNfa, "temp_input.automaton");
                 Console.WriteLine("Performing ssc/mssc...");
                 if (AllowEpsilon)
@@ -300,6 +254,8 @@ namespace Automata
 
             bool isRegex = Args[1].Trim(null).ToLower().Equals("regex");
 
+            var automGen = SuperiorAutomatonGenerator;
+
             if (isRegex)
             {
                 if (createOnly)
@@ -334,11 +290,11 @@ namespace Automata
                     int maxStates = GetOptionalClampedInt32(3, 10, 26, Args, "state count");
 
                     var alpha = GenerateAlphabet(rand, maxAlphabetLength);
-                    Console.WriteLine(GenerateNFA(rand, alpha, maxStates, allowEpsilon));
+                    Console.WriteLine(automGen.GenerateNFA(rand, alpha, maxStates, allowEpsilon));
                 }
                 else
                 {
-                    TestAutomata(Args, allowEpsilon, rand);
+                    TestAutomata(Args, allowEpsilon, rand, automGen);
                 }
             }
         }

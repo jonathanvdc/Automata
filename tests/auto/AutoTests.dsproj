@@ -13,5 +13,8 @@
     <Compile Include="AutoTests.ds" />
     <Compile Include="RegexTestCase.ds" />
     <Compile Include="RegexTests.ds" />
+    <Compile Include="IAutomatonGenerator.ds" />
+    <Compile Include="SuperiorAutomatonGenerator.ds" />
+    <Compile Include="XmlAutomatonGenerator.ds" />
   </ItemGroup>
 </Project>
