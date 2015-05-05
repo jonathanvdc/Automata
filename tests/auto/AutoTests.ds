@@ -102,6 +102,8 @@ namespace Automata
 
             process.Dispose();
 
+            if (string.IsNullOrEmpty(returnvalue)) return "";
+
             return returnvalue;
         }
 
@@ -177,7 +179,7 @@ namespace Automata
                 }
                 Console.WriteLine("Performed ssc/mssc");
 
-                string previousOutput = null;
+                string previousOutput = "";
                 bool isTrivial = true;
 
                 for (int j = 0; j < stringTestCount; j++)
@@ -196,11 +198,11 @@ namespace Automata
                             dfaOutput + "' when running the dfa. Stopping here!");
                         return;
                     }
-                    else if (enfaOutput == null || dfaOutput == null)
+                    else if (enfaOutput.Equals("") || dfaOutput.Equals(""))
                     {
                         return;
                     }
-                    else if (previousOutput == null)
+                    else if (previousOutput.Equals(""))
                     {
                         previousOutput = dfaOutput;
                     }
