@@ -1,0 +1,31 @@
+# naam van de automaat
+digraph graph1 {
+	type = "DFA";
+
+	# Geeft aan dat de image van links naar rechts moet worden gegenereerd
+	rankdir = LR;
+
+	# Het alfabet
+	alphabet = "0 1 ";
+
+	# De startstaat
+	start = "p";
+
+	# alle gewone staten
+	node [shape = circle];
+	"p" ;
+
+	# Alle eindstaten
+	node [shape = doublecircle];
+	"q" ;
+
+	# Enkel voor grafische uitvoer.
+	invStart [style = invis];
+	invStart -> "p";
+
+	# De transities
+	"q" -> "q" [label = "0"];
+	"q" -> "q" [label = "1"];
+	"p" -> "q" [label = "0"];
+	"p" -> "p" [label = "1"];
+}

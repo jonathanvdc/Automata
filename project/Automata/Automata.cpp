@@ -228,7 +228,6 @@ int main(int argc, const char* argv[])
 
 		std::ofstream output(argv[3]);
 
-		output << "Regex:" << std::endl;
 		output << regex->ToString() << std::endl;
 
 		output.close();

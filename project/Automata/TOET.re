@@ -1,0 +1,1 @@
+(Mauris-+Jonathan-+Sibert-)*Sibert+(Sibert-+Jonathan-+Mauris-)*Mauris+(Sibert-+Mauris-+Jonathan-)*Jonathan

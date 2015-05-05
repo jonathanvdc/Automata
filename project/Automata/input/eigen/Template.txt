@@ -1,0 +1,23 @@
+
+____ Format: _________________________________
+
+<type>
+start <state>
+accepts <states>
+transitions
+
+<transition>
+
+____ Patterns: _______________________________
+
+
+	<type> 			= 	dfa / nfa / enfa
+	<state> 		= 	string consisting of alphanumerics without spaces
+	<states> 		= 	string consisting of alphanumerics without spaces
+	
+	<transition> 	= 	<state> <input> <state>
+	<input>			= 	string consisting of alphanumerics without spaces, or -> case of an epsilon transition
+	
+____ Note: ___________________________________
+
+	No states or characters need to be declared

@@ -1,0 +1,68 @@
+++ Finite automaton input file ++
+This file uses an XML-like syntax to describe an automaton (only on automaton per file)
+Any text that is not between recognized tags is ignored. the recognized tags are:
+
+TYPE: should contain one of: dfa, nfa or enfa
+STATES: a comma separated list of strings. commas and lesser than symbols in a string need to be escaped with a backslash
+SYMBOLS: seperated by a comma. epsilon can be represented by \0, a comma or lesser than symbol needs to be escaped with a backslash. 
+The symbols list can also be written without comma's.
+STARTSTATE: should contain a string representing the start state that is also present in the list of states. lesser than symbols in the string should be escaped with a backslash.
+ACCEPTSTATES: a comma separated list of strings representing accept states. These should also be present in the list of states. A comma or lesser than symbol needs to be escaped with a backslash. 
+TRANSITIONFUNCTION: contains T tags for individual transitions
+T: contains a triplet of a string, a character and a string, separated by comma's. These represent respectively the origin state, the symbol and the resulting state. A comma or lesser than symbol needs to be escaped with a backslash.
+
+If redundant tags are present only the first one will be used.
+
+<TYPE>enfa</TYPE>
+<STATES>q0,q1,q2,q3,q4,q5</STATES>
+<SYMBOLS>0123456789+-.\0</SYMBOLS>
+<STARTSTATE>q0</STARTSTATE>
+<ACCEPTSTATES>q5</ACCEPTSTATES>
+<TRANSITIONFUNCTION>
+<T>q0,E,q1</T>
+<T>q0,+,q1</T>
+<T>q0,-,q1</T>
+<T>q1,0,q1</T>
+<T>q1,1,q1</T>
+<T>q1,2,q1</T>
+<T>q1,3,q1</T>
+<T>q1,4,q1</T>
+<T>q1,5,q1</T>
+<T>q1,6,q1</T>
+<T>q1,7,q1</T>
+<T>q1,8,q1</T>
+<T>q1,9,q1</T>
+<T>q1,.,q2</T>
+<T>q1,0,q4</T>
+<T>q1,1,q4</T>
+<T>q1,2,q4</T>
+<T>q1,3,q4</T>
+<T>q1,4,q4</T>
+<T>q1,5,q4</T>
+<T>q1,6,q4</T>
+<T>q1,7,q4</T>
+<T>q1,8,q4</T>
+<T>q1,9,q4</T>
+<T>q2,0,q3</T>
+<T>q2,1,q3</T>
+<T>q2,2,q3</T>
+<T>q2,3,q3</T>
+<T>q2,4,q3</T>
+<T>q2,5,q3</T>
+<T>q2,6,q3</T>
+<T>q2,7,q3</T>
+<T>q2,8,q3</T>
+<T>q2,9,q3</T>
+<T>q3,0,q3</T>
+<T>q3,1,q3</T>
+<T>q3,2,q3</T>
+<T>q3,3,q3</T>
+<T>q3,4,q3</T>
+<T>q3,5,q3</T>
+<T>q3,6,q3</T>
+<T>q3,7,q3</T>
+<T>q3,8,q3</T>
+<T>q3,9,q3</T>
+<T>q3,E,q5</T>
+<T>q4,.,q3</T>
+</TRANSITIONFUNCTION>
