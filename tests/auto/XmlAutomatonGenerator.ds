@@ -6,7 +6,26 @@ namespace Automata
 {
     public static class XmlAutomatonGenerator : IAutomatonGenerator
     {
-        public const string GenerateNFA(Random rand, char[] alpha, int maxStates, bool AllowEpsilon)
+        private void WriteArray(StringBuilder sb, string TagName, [char] Values)
+        {
+            sb.Append("<");
+            sb.Append(TagName);
+            sb.Append(">");
+            bool isFirst = true;
+            foreach (var item in Values)
+            {
+                if (isFirst) isFirst = false;
+                else sb.Append(",");
+
+                sb.Append(item);
+            }
+            sb.Append("</");
+            sb.Append(TagName);
+            sb.Append(">");
+            sb.AppendLine();
+        }
+
+        public string GenerateNFA(Random rand, char[] alpha, int maxStates, bool AllowEpsilon)
         {
             var states = AutoTests.GenerateStates(rand, maxStates);
 
@@ -17,32 +36,20 @@ namespace Automata
             else
                 sb.AppendLine("<TYPE>nfa</TYPE>");
 
-            sb.Append("<STATES>");
-            for (int i = 0; i < states.Length; i++)
-            {
-                if (i > 0) sb.Append(",");
-                sb.Append(states[i]);
-            }
-            sb.Append("</STATES>");
-            sb.AppendLine();
+            WriteArray(sb, "STATES", states);
+            WriteArray(sb, "SYMBOLS", alpha);
+            WriteArray(sb, "STARTSTATE", new char[] { AutoTests.GetRandomElement<char>(states, rand) });
 
-            sb.AppendLine("start " + AutoTests.GetRandomElement<char>(states, rand));
-            sb.Append("accepts");
             int acceptCount = rand.Next(0, states.Length);
             var accepted = new HashSet<char>();
             for (int i = 0; i < acceptCount; i++)
             {
                 accepted.Add(AutoTests.GetRandomElement<char>(states, rand));
             }
-            foreach (var item in accepted)
-            {
-                sb.Append(' ');
-                sb.Append(item);
-            }
-            sb.AppendLine();
+            WriteArray(sb, "ACCEPTSTATES", accepted);
 
             int transCount = rand.Next(0, 2 * states.Length * alpha.Length);
-            sb.AppendLine("transitions");
+            sb.AppendLine("<TRANSITIONFUNCTION>");
 
             for (int i = 0; i < transCount; i++)
             {
@@ -52,14 +59,20 @@ namespace Automata
                 string transName;
                 if (AllowEpsilon && rand.Next(0, 3) == 0)
                 {
-                    transName = "->";
+                    transName = "E";
                 }
                 else transName = (string)AutoTests.GetRandomElement<char>(alpha, rand);
 
+                sb.Append("<T>");
                 sb.Append(fromState);
-                sb.Append(' ').Append(transName).Append(' ');
-                sb.Append(toState).AppendLine();
+                sb.Append(",");
+                sb.Append(transName);
+                sb.Append(",");
+                sb.Append(toState);
+                sb.Append("</T>").AppendLine();
             }
+
+            sb.AppendLine("</TRANSITIONFUNCTION>");
 
             return (string)sb;
         }
