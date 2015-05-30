@@ -4,7 +4,8 @@
 
 namespace Automata
 {
-    /// \brief Defines a function that "tags" an input value with a fixed tag.
+    /// \brief Defines a function that "tags" an input value with a fixed
+    /// tag.
     template<typename T, typename TTag>
     struct TagFunction : public virtual IFunction<T, std::pair<T, TTag>>
     {

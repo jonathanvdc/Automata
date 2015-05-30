@@ -1,6 +1,21 @@
 using System;
 
-public interface IAutomatonGenerator
+namespace Automata
 {
-    string GenerateNFA(Random rand, char[] alpha, int maxStates, bool AllowEpsilon);
+    public class NFA
+    {
+        public const this(set char[] Alphabet, set char[] States, set char StartState, set [char] FinalStates,
+                          set [Tuple<char, char, char>] Transitions);
+
+        public char[] Alphabet;
+        public char[] States;
+        public char StartState;
+        public [char] FinalStates;
+        public [Tuple<char, char, char>] Transitions;
+    }
+
+    public interface IAutomatonGenerator
+    {
+        string OutputNFA(NFA Autom, bool AllowEpsilon);
+    }
 }

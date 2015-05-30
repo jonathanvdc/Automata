@@ -112,4 +112,14 @@ public struct LinearSet<T>
     {
         return !this.ContainsAll(Other) || !Other.ContainsAll(this);
     }
+
+    public const int operator hash()
+    {
+        int result = 0;
+        foreach (var item in Items)
+        {
+            result ^= hash(item);
+        }
+        return result;
+    }
 }

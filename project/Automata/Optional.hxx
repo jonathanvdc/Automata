@@ -1,17 +1,25 @@
 #include "Optional.h"
 
+#include <functional>
 
 template<typename T>
 Optional<T>::Optional()
-{
-    this->HasValue = false;
-}
+    : HasValue(false)
+{ }
 
 template<typename T>
 Optional<T>::Optional(T Value)
+    : Value(Value), HasValue(true)
+{ }
+
+template<typename T>
+int Optional<T>::GetHashCode() const
 {
-    this->Value = Value;
-    this->HasValue = true;
+    if (!this->HasValue)
+        return 0;
+    else
+        return (int)std::hash<T>()(this->Value);
+
 }
 
 template<typename T>

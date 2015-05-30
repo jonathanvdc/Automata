@@ -124,6 +124,18 @@ namespace Automata
             stream.Dispose();
         }
 
+        public const string GetOptionalString(string[] Args, int Index, string Default)
+        {
+            if (Args.Length > Index)
+            {
+                return Args[Index];
+            }
+            else
+            {
+                return Default;
+            }
+        }
+
         public const int GetOptionalInt32(string[] Args, int Index, int Default)
         {
             if (Args.Length > Index)
@@ -147,6 +159,25 @@ namespace Automata
             return val;
         }
 
+        public NFA GenerateNFA(Random rand, char[] alpha, int maxStates, bool AllowEpsilon)
+        {
+            var states = AutoTests.GenerateStates(rand, maxStates);
+
+            var start = AutoTests.GetRandomElement<char>(states, rand);
+
+            int acceptCount = rand.Next(states.Length);
+
+            var accepted = new HashSet<char>();
+            for (int i = 0; i < acceptCount; i++)
+            {
+                accepted.Add(AutoTests.GetRandomElement<char>(states, rand));
+            }
+
+            var trans = AutoTests.GenerateTransitions(rand, AllowEpsilon, states, alpha);
+
+            return new NFA(alpha, states, start, accepted, trans);
+        }
+
         public void TestAutomata(string[] Args, bool AllowEpsilon, Random rand, IAutomatonGenerator AutomGen)
         {
             var nfaTime = new Stopwatch();
@@ -159,37 +190,47 @@ namespace Automata
             int maxAlphabetLength = GetOptionalClampedInt32(5, 5, 26, Args, "alphabet size");
             int maxStates = GetOptionalClampedInt32(6, 10, 26, Args, "state count");
             int maxStringLength = GetOptionalInt32(Args, 7, 5);
+            string outputPath = GetOptionalString(Args, 8, "tests");
 
             int nonTrivialCount = 0;
 
-            for (int i = 0; i < testCount; i++)
+            int i;
+            for (i = 0; nonTrivialCount < testCount; i++)
             {
                 var alpha = GenerateAlphabet(rand, maxAlphabetLength);
                 Console.WriteLine("Generating automaton...");
-                var genNfa = AutomGen.GenerateNFA(rand, alpha, maxStates, AllowEpsilon);
-                WriteTo(genNfa, "temp_input.automaton");
+                var genNfa = GenerateNFA(rand, alpha, maxStates, AllowEpsilon);
+                string supNfa = SuperiorAutomatonGenerator.OutputNFA(genNfa, AllowEpsilon);
+                WriteTo(supNfa, "temp_input.automaton");
                 Console.WriteLine("Performing ssc/mssc...");
+
+                string oPath = outputPath + "/Test" + nonTrivialCount + ".dfa";
+
                 if (AllowEpsilon)
                 {
-                    RunTimedCmd(appPath, new string[] { "mssc", "temp_input.automaton", "temp_output.dfa" }, sscTime);
+                    RunTimedCmd(appPath, new string[] { "mssc", "temp_input.automaton", oPath }, sscTime);
                 }
                 else
                 {
-                    RunTimedCmd(appPath, new string[] { "ssc", "temp_input.automaton", "temp_output.dfa" }, sscTime);
+                    RunTimedCmd(appPath, new string[] { "ssc", "temp_input.automaton", oPath }, sscTime);
                 }
                 Console.WriteLine("Performed ssc/mssc");
 
                 string previousOutput = "";
                 bool isTrivial = true;
 
+                var testStrings = new StringBuilder();
+
                 for (int j = 0; j < stringTestCount; j++)
                 {
                     string testStr = GenerateString(alpha, maxStringLength, rand);
 
+                    testStrings.Append(testStr);
+
                     Console.WriteLine("Testing '" + testStr + "'...");
 
                     string enfaOutput = RunTimedCmd(appPath, new string[] { "accepts", "temp_input.automaton", testStr }, nfaTime);
-                    string dfaOutput = RunTimedCmd(appPath, new string[] { "accepts", "temp_output.dfa", testStr }, dfaTime);
+                    string dfaOutput = RunTimedCmd(appPath, new string[] { "accepts", oPath, testStr }, dfaTime);
 
                     if (!enfaOutput.Equals(dfaOutput))
                     {
@@ -210,21 +251,25 @@ namespace Automata
                     {
                         isTrivial = false;
                     }
+                    testStrings.AppendLine(" - " + dfaOutput.Trim(null));
 
                     Console.WriteLine("Output for '" + testStr + "': '" + dfaOutput.Trim(null) + "'");
                 }
 
                 if (!isTrivial)
                 {
+                    Directory.CreateDirectory(outputPath);
+                    WriteTo(AutomGen.OutputNFA(genNfa, AllowEpsilon), outputPath + "/Test" + nonTrivialCount + ".fa");
+                    WriteTo((string)testStrings, outputPath + "/Test" + nonTrivialCount + ".input");
                     nonTrivialCount++;
                 }
 
-                Console.WriteLine("Just ran automaton " + (i + 1) + " out of " + testCount + ". So far so good.");
+                Console.WriteLine("Just ran automaton " + (i + 1) + ". We need " + testCount + " non-trivial automata in total. So far so good.");
                 Console.WriteLine();
             }
 
             Console.WriteLine("Seems like it all checks out.");
-            Console.WriteLine(testCount + " automata were tested, " + nonTrivialCount + " of which were nontrivial.");
+            Console.WriteLine(i + " automata were tested, " + nonTrivialCount + " of which were nontrivial.");
 
             Console.WriteLine();
             Console.WriteLine("Timing report:");
@@ -270,7 +315,7 @@ namespace Automata
                 Console.ResetColor();
                 Console.WriteLine("Usage: create|test nfa|enfa|regex [<apppath.exe>" +
                     " [automaton-test-count = 15] [string-test-count = 15]] [max-alphabet-length = 5]" +
-                    " [max-states = 10] [max-string-length = 5]");
+                    " [max-states = 10] [max-string-length = 5] [test-name]");
                 return;
             }
 
@@ -316,7 +361,7 @@ namespace Automata
                     int maxStates = GetOptionalClampedInt32(3, 10, 26, Args, "state count");
 
                     var alpha = GenerateAlphabet(rand, maxAlphabetLength);
-                    Console.WriteLine(automGen.GenerateNFA(rand, alpha, maxStates, allowEpsilon));
+                    Console.WriteLine(automGen.OutputNFA(GenerateNFA(rand, alpha, maxStates, allowEpsilon), allowEpsilon));
                 }
                 else
                 {

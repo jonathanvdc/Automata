@@ -7,12 +7,28 @@ namespace Automata
     /// </summary>
     public struct ENFAutomaton<TState, TChar> : IAutomaton<TChar>
     {
+        /// <summary>
+        /// Creates a non-deterministic finite automaton with epsilon transitions
+        /// from the given start state, accepting states and transition functions.
+        /// </summary>
         public const this(set TState StartState, set LinearSet<TState> AcceptingStates, set TransitionTable<pair<TState, Optional<TChar>>, LinearSet<TState>> TransitionFunction);
-        
+
+        /// <summary>
+        /// Gets the e-NFA's start state.
+        /// </summary>
         public TState StartState { const get; private set; }
+        /// <summary>
+        /// Gets the e-NFA's set of accepting states.
+        /// </summary>
         public LinearSet<TState> AcceptingStates { const get; private set; }
+        /// <summary>
+        /// Gets the e-NFA's transition function.
+        /// </summary>
         public TransitionTable<pair<TState, Optional<TChar>>, LinearSet<TState>> TransitionFunction { const get; private set; }
-        
+
+        /// <summary>
+        /// Creates a new e-NFA by renaming this e-NFA's states and symbols.
+        /// </summary>
         public const ENFAutomaton<TNState, TNChar> Rename<TNState, TNChar>(IFunction<TState, TNState>* StateRenamer, IFunction<TChar, TNChar>* CharRenamer)
         {
             TNState newStart = StateRenamer->Apply(StartState);
@@ -41,11 +57,20 @@ namespace Automata
             return new ENFAutomaton<TNState, TNChar>(newStart, newAccept, transFun);
         }
 
+        /// <summary>
+        /// Performs a state transition that starts at the given state,
+        /// and uses the given character (or epsilon, if none is given).
+        /// </summary>
         public const LinearSet<TState> PerformTransition(TState State, Optional<TChar> Character)
         {
             var transFun = TransitionFunction;
             return transFun.Apply(new pair<TState, Optional<TChar>>(State, Character));
         }
+
+        /// <summary>
+        /// Returns the set of all states reachable by performing a single transition
+        /// with the given character for each state in the given state set.
+        /// </summary>
         public const LinearSet<TState> PerformAllTransitions(LinearSet<TState> States, Optional<TChar> Character)
         {
             var results = new LinearSet<TState>();
@@ -55,6 +80,10 @@ namespace Automata
             }
             return results;
         }
+
+        /// <summary>
+        /// Computes the epsilon-closure of the given state.
+        /// </summary>
         public const LinearSet<TState> Eclose(TState State)
         {
             LinearSet<TState> results = new LinearSet<TState>();
@@ -66,7 +95,7 @@ namespace Automata
                 results.Add(last);
                 step.RemoveLast();
                 var nextStep = new LinearSet<TState>();
-                
+
                 var trans = PerformTransition(last, new Optional<TChar>());
                 foreach (var item in trans.Items)
                     if (!results.Contains(item))
@@ -76,6 +105,10 @@ namespace Automata
             }
             return results;
         }
+
+        /// <summary>
+        /// Computes the epsilon-closure of the given set of states.
+        /// </summary>
         public const LinearSet<TState> Eclose(LinearSet<TState> States)
         {
             LinearSet<TState> vals = new LinearSet<TState>();
@@ -85,7 +118,12 @@ namespace Automata
             }
             return vals;
         }
-        
+
+        /// <summary>
+        /// Performs the extended transition that starts at the given state and
+        /// persues the labels that match the elements of the given sequence of
+        /// characters, also performing the epsilon-closure.
+        /// </summary>
         public const LinearSet<TState> PerformExtendedTransition(TState State, TChar[] Characters)
         {
             var states = Eclose(State);
@@ -96,19 +134,31 @@ namespace Automata
             }
             return states;
         }
-        
+
+        /// <summary>
+        /// Finds out whether the given sequence of states has a non-empty
+        /// intersection with the set of accepting states.
+        /// </summary>
         public const bool ContainsAcceptingState(LinearSet<TState> States)
         {
             var acceptStates = AcceptingStates;
             var intersection = acceptStates.Intersect(States);
             return !intersection.IsEmpty;
         }
-        
+
+
+        /// <summary>
+        /// Figures out whether this automaton accepts the given string of
+        /// symbols.
+        /// </summary>
         public const bool Accepts(TChar[] Characters)
         {
-            return ContainsAcceptingState(PerfromExtendedTransition(StartState, Characters));
+            return ContainsAcceptingState(PerformExtendedTransition(StartState, Characters));
         }
-        
+
+        /// <summary>
+        /// Gets the set of all states in this automaton.
+        /// </summary>
         public const LinearSet<TState> GetStates()
         {
             LinearSet<TState> results = new LinearSet<TState>();
@@ -120,7 +170,10 @@ namespace Automata
             }
             return results;
         }
-        
+
+        /// <summary>
+        /// Gets the automaton's alphabet.
+        /// </summary>
         public const LinearSet<TChar> GetAlphabet()
         {
             LinearSet<TChar> results = new LinearSet<TChar>();
@@ -132,7 +185,7 @@ namespace Automata
             }
             return results;
         }
-        
+
         /// <summary>
         /// Performs the modified subset construction on this automaton.
         /// </summary>
@@ -140,7 +193,7 @@ namespace Automata
         {
             return ToDFAutomaton(GetAlphabet());
         }
-        
+
         /// <summary>
         /// Performs the modified subset construction based on the given alphabet.
         /// </summary>
@@ -149,11 +202,11 @@ namespace Automata
             var startState = Eclose(StartState);
             var transMap = new unordered_map<pair<LinearSet<TState>, TChar>, LinearSet<TState>>();
             var accStates = new LinearSet<LinearSet<TState>>();
-            
+
             var processedStates = new LinearSet<LinearSet<TState>>();
             var nextStates = new LinearSet<LinearSet<TState>>();
             nextStates.Add(startState);
-            
+
             while (!nextStates.IsEmpty)
             {
                 var last = nextStates.Last;
@@ -175,7 +228,7 @@ namespace Automata
                 nextStates.RemoveLast();
                 nextStates.AddAll(accumulatedStates);
             }
-            
+
             var transFun = new TransitionTable<pair<LinearSet<TState>, TChar>, LinearSet<TState>>(transMap);
             return new DFAutomaton<LinearSet<TState>, TChar>(startState, accStates, transFun);
         }

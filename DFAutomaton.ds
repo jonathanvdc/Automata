@@ -7,17 +7,39 @@ namespace Automata
     /// </summary>
     public struct DFAutomaton<TState, TChar> : IAutomaton<TChar>
     {
+        /// <summary>
+        /// Creates a deterministic finite automaton based on the given start
+        /// state, set of accepting states, and transition function.
+        /// </summary>
         public const this(set TState StartState, set LinearSet<TState> AcceptingStates, set TransitionTable<pair<TState, TChar>, TState> TransitionFunction);
 
+        /// <summary>
+        /// Gets this automaton's start state.
+        /// </summary>
         public TState StartState { const get; private set; }
+        /// <summary>
+        /// Gets this automaton's set of accepting states.
+        /// </summary>
         public LinearSet<TState> AcceptingStates { const get; private set; }
+        /// <summary>
+        /// Gets this automaton's transition function.
+        /// </summary>
         public TransitionTable<pair<TState, TChar>, TState> TransitionFunction { const get; private set; }
 
+        /// <summary>
+        /// Applies the automaton's transition function to the given state and
+        /// symbol.
+        /// </summary>
         public const TState PerformTransition(TState State, TChar Character)
         {
             var transFun = TransitionFunction;
             return transFun.Apply(new pair<TState, TChar>(State, Character));
         }
+
+        /// <summary>
+        /// Applies the automaton's extended transition function to the given state and
+        /// string of symbols.
+        /// </summary>
         public const TState PerformExtendedTransition(TState State, TChar[] Characters)
         {
             var result = State;
@@ -28,6 +50,9 @@ namespace Automata
             return result;
         }
 
+        /// <summary>
+        /// Renames this automaton with the given state and character renamer.
+        /// </summary>
         public const DFAutomaton<TNState, TNChar> Rename<TNState, TNChar>(IFunction<TState, TNState>* StateRenamer, IFunction<TChar, TNChar>* CharRenamer)
         {
             TNState newStart = StateRenamer->Apply(StartState);
@@ -47,6 +72,9 @@ namespace Automata
             return new DFAutomaton<TNState, TNChar>(newStart, newAccept, transFun);
         }
 
+        /// <summary>
+        /// Gets the set of all states in this automaton.
+        /// </summary>
         public const LinearSet<TState> GetStates()
         {
             LinearSet<TState> results = new LinearSet<TState>();
@@ -59,6 +87,9 @@ namespace Automata
             return results;
         }
 
+        /// <summary>
+        /// Gets this automaton's alphabet, as a set of characters.
+        /// </summary>
         public const LinearSet<TChar> GetAlphabet()
         {
             LinearSet<TChar> results = new LinearSet<TChar>();
@@ -70,17 +101,27 @@ namespace Automata
             return results;
         }
 
+        /// <summary>
+        /// Finds out if the given state is an accepting state.
+        /// </summary>
         public const bool IsAcceptingState(TState State)
         {
             var acceptStates = AcceptingStates;
             return acceptStates.Contains(State);
         }
 
+        /// <summary>
+        /// Checks if this automaton accepts the given string of symbols.
+        /// </summary>
         public const bool Accepts(TChar[] Characters)
         {
             return IsAcceptingState(PerformExtendedTransition(StartState, Characters));
         }
 
+        /// <summary>
+        /// Performs the table-filling algorithm on this automaton, and
+        /// returns the resulting partition of equivalent states.
+        /// </summary>
         public const unordered_map<TState, LinearSet<TState>> TFAPartition()
         {
             var states = GetStates();
@@ -143,6 +184,9 @@ namespace Automata
             return partition;
         }
 
+        /// <summary>
+        /// Gets the set of all reachable states in this automaton.
+        /// </summary>
         public const LinearSet<TState> ReachableStates()
         {
             var todo = new LinearSet<TState>(StartState);
@@ -162,6 +206,12 @@ namespace Automata
             return reachable;
         }
 
+        /// <summary>
+        /// Optimizes this automaton. First, all reachable states are detected.
+        /// Then, the TFA is applied to these reachable states, and all
+        /// equivalent states are merged. A new automaton is constructed based on
+        /// these merged states, and then returned.
+        /// </summary>
         public const DFAutomaton<LinearSet<TState>, TChar> Optimize()
         {
             var reachable = ReachableStates();
@@ -196,6 +246,9 @@ namespace Automata
                 partition[StartState], final, optimalTable);
         }
 
+        /// <summary>
+        /// Checks if this automaton is equivalent to the given other automaton.
+        /// </summary>
         public const bool EquivalentTo(DFAutomaton<TState, TChar> other)
         {
             var tagFalse = new TagFunction<TState, bool>(false);

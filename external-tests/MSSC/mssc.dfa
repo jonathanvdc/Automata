@@ -1,0 +1,40 @@
+dfa
+start {A}
+accepts {G,H} {H}
+transitions
+{A} s {}
+{G,H} a {G,H}
+{C} a {C}
+{A} n {}
+{A} b {B}
+{G,H} n {}
+{C} n {D}
+{B} a {C}
+{A} a {}
+{B} b {}
+{G,H} b {}
+{C} b {}
+{B} n {}
+{B} s {}
+{C} s {}
+{G,H} s {H}
+{D} n {D}
+{D} b {}
+{D} a {E}
+{D} s {}
+{} n {}
+{H} b {}
+{E} n {F}
+{} b {}
+{H} n {}
+{E} b {}
+{} a {}
+{F} s {}
+{E} a {E}
+{} s {}
+{F} a {G,H}
+{E} s {}
+{F} n {F}
+{F} b {}
+{H} a {}
+{H} s {H}

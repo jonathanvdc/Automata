@@ -1,5 +1,6 @@
 #include "LinearSet.h"
 
+#include <functional>
 #include <initializer_list>
 #include <vector>
 #include "ArraySlice.h"
@@ -10,21 +11,18 @@ LinearSet<T>::LinearSet()
 
 template<typename T>
 LinearSet<T>::LinearSet(std::vector<T> Values)
-{
-    this->vals = Values;
-}
+    : vals(Values)
+{ }
 
 template<typename T>
 LinearSet<T>::LinearSet(stdx::ArraySlice<T> Values)
-{
-    this->vals = (std::vector<T>)Values;
-}
+    : vals((std::vector<T>)Values)
+{ }
 
 template<typename T>
 LinearSet<T>::LinearSet(std::initializer_list<T> Values)
-{
-    this->vals = std::vector<T>(Values);
-}
+    : vals(Values)
+{ }
 
 template<typename T>
 LinearSet<T>::LinearSet(T Value)
@@ -72,16 +70,14 @@ LinearSet<T> LinearSet<T>::Intersect(LinearSet<T> Other) const
 {
     LinearSet<T> result;
     for (auto& item : this->vals)
-    {
         if (Other.Contains(item))
-        {
             result.Add(item);
-        }
-    }
+
     return result;
 }
 
-/// \brief Removes the last element from the linear set and returns it.
+/// \brief Removes the last element from the linear set and returns
+/// it.
 template<typename T>
 T LinearSet<T>::Pop()
 {
@@ -109,12 +105,9 @@ LinearSet<T> LinearSet<T>::Without(T Value) const
 {
     LinearSet<T> result;
     for (auto& item : this->getItems())
-    {
         if (item != Value)
-        {
             result.Add(item);
-        }
-    }
+
     return result;
 }
 
@@ -140,6 +133,15 @@ template<typename T>
 T LinearSet<T>::getLast() const
 {
     return this->vals[this->getCount() - 1];
+}
+
+template<typename T>
+int LinearSet<T>::GetHashCode() const
+{
+    int result = 0;
+    for (auto& item : this->getItems())
+        result ^= std::hash<T>()(item);
+    return result;
 }
 
 template<typename T>

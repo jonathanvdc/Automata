@@ -1,0 +1,59 @@
+# auto generated dot-language file
+
+digraph  {
+	type = "ENFA";
+
+	rankdir = LR;
+
+	alphabet = "a b c c d f a e n f a ";
+
+	start = "q0";
+
+	node [shape = circle];
+	"q31" "q30" "q29" "q28" "q27" "q26" "q25" "q24" "q23" "q22" "q21" "q20" "q19" "q18" "q17" "q16" "q15" "q14" "q13" "q12" "q11" "q10" "q9" "q8" "q7" "q6" "q5" "q4" "q3" "q2" "q0" ;
+
+	node [shape = doublecircle];
+	"q1" ;
+
+	invStart [style = invis];
+
+	invStart -> "q0";
+	"q31" -> "q17" [label = "ε"];
+	"q30" -> "q31" [label = "a"];
+	"q29" -> "q30" [label = "ε"];
+	"q28" -> "q29" [label = "f"];
+	"q27" -> "q28" [label = "ε"];
+	"q26" -> "q27" [label = "n"];
+	"q25" -> "q26" [label = "ε"];
+	"q24" -> "q25" [label = "e"];
+	"q23" -> "q17" [label = "ε"];
+	"q22" -> "q23" [label = "a"];
+	"q21" -> "q22" [label = "ε"];
+	"q20" -> "q21" [label = "f"];
+	"q19" -> "q20" [label = "ε"];
+	"q18" -> "q19" [label = "d"];
+	"q17" -> "q1" [label = "ε"];
+	"q16" -> "q18" [label = "ε"];
+	"q16" -> "q24" [label = "ε"];
+	"q15" -> "q14" [label = "ε"];
+	"q15" -> "q13" [label = "ε"];
+	"q14" -> "q15" [label = "c"];
+	"q13" -> "q5" [label = "ε"];
+	"q12" -> "q14" [label = "ε"];
+	"q12" -> "q13" [label = "ε"];
+	"q11" -> "q5" [label = "ε"];
+	"q10" -> "q11" [label = "c"];
+	"q9" -> "q10" [label = "ε"];
+	"q8" -> "q9" [label = "b"];
+	"q7" -> "q8" [label = "ε"];
+	"q6" -> "q7" [label = "a"];
+	"q5" -> "q4" [label = "ε"];
+	"q5" -> "q3" [label = "ε"];
+	"q4" -> "q6" [label = "ε"];
+	"q4" -> "q12" [label = "ε"];
+	"q3" -> "q1" [label = "ε"];
+	"q2" -> "q4" [label = "ε"];
+	"q2" -> "q3" [label = "ε"];
+	"q0" -> "q2" [label = "ε"];
+	"q0" -> "q16" [label = "ε"];
+}

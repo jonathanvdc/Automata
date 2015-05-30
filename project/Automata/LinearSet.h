@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include <initializer_list>
 #include <vector>
 #include "ArraySlice.h"
@@ -23,7 +24,8 @@ public:
 
     LinearSet<T> Intersect(LinearSet<T> Other) const;
 
-    /// \brief Removes the last element from the linear set and returns it.
+    /// \brief Removes the last element from the linear set and returns
+    /// it.
     T Pop();
 
     void RemoveLast();
@@ -40,11 +42,24 @@ public:
 
     T getLast() const;
 
+    int GetHashCode() const;
+
     bool operator==(LinearSet<T> Other) const;
 
     bool operator!=(LinearSet<T> Other) const;
 private:
     std::vector<T> vals;
 };
+namespace std
+{
+    template<typename T>
+    struct hash<LinearSet<T>>
+    {
+        std::size_t operator()(const LinearSet<T>& Arg) const
+        {
+            return Arg.GetHashCode();
+        }
+    };
+}
 
 #include "LinearSet.hxx"

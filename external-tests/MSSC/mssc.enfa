@@ -1,0 +1,19 @@
+enfa
+start A
+accepts H
+transitions
+
+A b B
+B a C
+C a C
+C n D
+D a E
+D n D
+E a E
+E n F
+F a G
+F n F
+G a G
+G s H
+G -> H
+H s H

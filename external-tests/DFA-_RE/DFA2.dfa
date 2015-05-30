@@ -1,0 +1,28 @@
+dfa
+start q0
+accepts q5 q15
+transitions
+
+q0 W q1
+q1 I q2
+q2 N q3
+q3 A q4
+q4 K q5
+
+q1 i q6
+q6 s q7
+q7 k q8
+q8 I q2
+
+q2 n q9
+q9 f q10
+q10 N q3
+
+q4 t q11
+q11 K q5
+
+q5 r q12
+q12 i q13
+q13 n q14
+q14 g q15
+

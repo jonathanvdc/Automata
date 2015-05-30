@@ -57,9 +57,9 @@ namespace Automata
             sb.Append("    ");
         }
 
-        public string GenerateNFA(Random rand, char[] alpha, int maxStates, bool AllowEpsilon)
+        public const string OutputNFA(NFA Automaton, bool AllowEpsilon)
         {
-            var states = AutoTests.GenerateStates(rand, maxStates);
+            var states = Automaton.States;
 
             var sb = new StringBuilder();
 
@@ -71,31 +71,21 @@ namespace Automata
                 AppendIndentedLine(sb, "type = \"NFA\";");
 
             AppendIndentedLine(sb);
-            WriteArray(sb, "alphabet", alpha);
+            WriteArray(sb, "alphabet", Automaton.Alphabet);
             AppendIndentedLine(sb);
-            var startState = AutoTests.GetRandomElement<char>(states, rand);
-            WriteArray(sb, "start", new char[] { startState });
+            WriteArray(sb, "start", new char[] { Automaton.StartState });
             AppendIndentedLine(sb);
 
-            int acceptCount = rand.Next(0, states.Length);
-            var accepted = new HashSet<char>();
-            for (int i = 0; i < acceptCount; i++)
-            {
-                accepted.Add(AutoTests.GetRandomElement<char>(states, rand));
-            }
-
-            WriteStateArray(sb, "circle", Enumerable.Except<char>(states, accepted));
+            WriteStateArray(sb, "circle", Enumerable.Except<char>(states, Automaton.FinalStates));
             AppendIndentedLine(sb);
-            WriteStateArray(sb, "doublecircle", accepted);
+            WriteStateArray(sb, "doublecircle", Automaton.FinalStates);
             AppendIndentedLine(sb);
 
             AppendIndentedLine(sb, "invStart [style = invis];");
-            AppendIndentedLine(sb, "invStart -> \"" + startState + "\";");
+            AppendIndentedLine(sb, "invStart -> \"" + Automaton.StartState + "\";");
             sb.AppendLine();
 
-            var trans = AutoTests.GenerateTransitions(rand, AllowEpsilon, states, alpha);
-
-            foreach (var item in trans)
+            foreach (var item in Automaton.Transitions)
             {
                 sb.Append("    ");
                 sb.Append('"');

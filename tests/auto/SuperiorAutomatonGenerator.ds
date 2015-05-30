@@ -7,9 +7,9 @@ namespace Automata
 {
     public static class SuperiorAutomatonGenerator : IAutomatonGenerator
     {
-        public const string GenerateNFA(Random rand, char[] alpha, int maxStates, bool AllowEpsilon)
+        public const string OutputNFA(NFA Automaton, bool AllowEpsilon)
         {
-            var states = AutoTests.GenerateStates(rand, maxStates);
+            var states = Automaton.States;
 
             var sb = new StringBuilder();
 
@@ -18,15 +18,9 @@ namespace Automata
             else
                 sb.AppendLine("nfa");
 
-            sb.AppendLine("start " + AutoTests.GetRandomElement<char>(states, rand));
+            sb.AppendLine("start " + Automaton.StartState);
             sb.Append("accepts");
-            int acceptCount = rand.Next(0, states.Length);
-            var accepted = new HashSet<char>();
-            for (int i = 0; i < acceptCount; i++)
-            {
-                accepted.Add(AutoTests.GetRandomElement<char>(states, rand));
-            }
-            foreach (var item in accepted)
+            foreach (var item in Automaton.FinalStates)
             {
                 sb.Append(' ');
                 sb.Append(item);
@@ -35,9 +29,7 @@ namespace Automata
 
             sb.AppendLine("transitions");
 
-            var trans = AutoTests.GenerateTransitions(rand, AllowEpsilon, states, alpha);
-
-            foreach (var item in trans)
+            foreach (var item in Automaton.Transitions)
             {
                 sb.Append(item.Item1);
                 sb.Append(" ");

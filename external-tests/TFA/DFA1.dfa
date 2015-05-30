@@ -1,0 +1,10 @@
+dfa
+start q0
+accepts q3
+transitions
+
+q0 0 q0
+q0 1 q1
+q0 1 q2
+q1 0 q3
+q2 0 q3

@@ -12,6 +12,9 @@
 
 using namespace Automata;
 
+/// \brief Creates a non-deterministic finite automaton with epsilon
+/// transitions from the given start state, accepting states
+/// and transition functions.
 template<typename TState, typename TChar>
 ENFAutomaton<TState, TChar>::ENFAutomaton(TState StartState, LinearSet<TState> AcceptingStates, TransitionTable<std::pair<TState, Optional<TChar>>, LinearSet<TState>> TransitionFunction)
 {
@@ -20,13 +23,17 @@ ENFAutomaton<TState, TChar>::ENFAutomaton(TState StartState, LinearSet<TState> A
     this->setTransitionFunction(TransitionFunction);
 }
 
-/// \brief Gets a boolean value that indicates whether the automaton accepts the given string.
+/// \brief Figures out whether this automaton accepts the given
+/// string of symbols.
 template<typename TState, typename TChar>
 bool ENFAutomaton<TState, TChar>::Accepts(stdx::ArraySlice<TChar> Characters) const
 {
-    return this->ContainsAcceptingState(this->PerformExtendedTransition(this->getStartState(), Characters));
+    return this->ContainsAcceptingState(this->PerformExtendedTransition(this->getStartState(), 
+                                                                        Characters));
 }
 
+/// \brief Finds out whether the given sequence of states has a
+/// non-empty intersection with the set of accepting states.
 template<typename TState, typename TChar>
 bool ENFAutomaton<TState, TChar>::ContainsAcceptingState(LinearSet<TState> States) const
 {
@@ -35,6 +42,7 @@ bool ENFAutomaton<TState, TChar>::ContainsAcceptingState(LinearSet<TState> State
     return !intersection.getIsEmpty();
 }
 
+/// \brief Computes the epsilon-closure of the given state.
 template<typename TState, typename TChar>
 LinearSet<TState> ENFAutomaton<TState, TChar>::Eclose(TState State) const
 {
@@ -49,42 +57,37 @@ LinearSet<TState> ENFAutomaton<TState, TChar>::Eclose(TState State) const
         LinearSet<TState> nextStep;
         auto trans = this->PerformTransition(last, Optional<TChar>());
         for (auto& item : trans.getItems())
-        {
             if (!results.Contains(item))
-            {
                 step.Add(item);
-            }
-        }
+
     }
     return results;
 }
 
+/// \brief Computes the epsilon-closure of the given set of states.
 template<typename TState, typename TChar>
 LinearSet<TState> ENFAutomaton<TState, TChar>::Eclose(LinearSet<TState> States) const
 {
     LinearSet<TState> vals;
     for (auto& item : States.getItems())
-    {
         vals.AddAll(this->Eclose(item));
-    }
     return vals;
 }
 
+/// \brief Gets the automaton's alphabet.
 template<typename TState, typename TChar>
 LinearSet<TChar> ENFAutomaton<TState, TChar>::GetAlphabet() const
 {
     LinearSet<TChar> results;
     auto transfunc = this->getTransitionFunction();
     for (auto& item : transfunc.getMap())
-    {
         if (item.first.second.HasValue)
-        {
             results.Add(item.first.second.Value);
-        }
-    }
+
     return results;
 }
 
+/// \brief Gets the set of all states in this automaton.
 template<typename TState, typename TChar>
 LinearSet<TState> ENFAutomaton<TState, TChar>::GetStates() const
 {
@@ -98,17 +101,22 @@ LinearSet<TState> ENFAutomaton<TState, TChar>::GetStates() const
     return results;
 }
 
+/// \brief Returns the set of all states reachable by performing a
+/// single transition with the given character for each state
+/// in the given state set.
 template<typename TState, typename TChar>
 LinearSet<TState> ENFAutomaton<TState, TChar>::PerformAllTransitions(LinearSet<TState> States, Optional<TChar> Character) const
 {
     LinearSet<TState> results;
     for (auto& val : States.getItems())
-    {
         results.AddAll(this->PerformTransition(val, Character));
-    }
     return results;
 }
 
+/// \brief Performs the extended transition that starts at the given
+/// state and persues the labels that match the elements of the
+/// given sequence of characters, also performing the
+/// epsilon-closure.
 template<typename TState, typename TChar>
 LinearSet<TState> ENFAutomaton<TState, TChar>::PerformExtendedTransition(TState State, stdx::ArraySlice<TChar> Characters) const
 {
@@ -121,6 +129,9 @@ LinearSet<TState> ENFAutomaton<TState, TChar>::PerformExtendedTransition(TState 
     return states;
 }
 
+/// \brief Performs a state transition that starts at the given
+/// state, and uses the given character (or epsilon, if none is
+/// given).
 template<typename TState, typename TChar>
 LinearSet<TState> ENFAutomaton<TState, TChar>::PerformTransition(TState State, Optional<TChar> Character) const
 {
@@ -129,14 +140,16 @@ LinearSet<TState> ENFAutomaton<TState, TChar>::PerformTransition(TState State, O
 }
 
 
-/// \brief Performs the modified subset construction on this automaton.
+/// \brief Performs the modified subset construction on this
+/// automaton.
 template<typename TState, typename TChar>
 DFAutomaton<LinearSet<TState>, TChar> ENFAutomaton<TState, TChar>::ToDFAutomaton() const
 {
     return this->ToDFAutomaton(this->GetAlphabet());
 }
 
-/// \brief Performs the modified subset construction based on the given alphabet.
+/// \brief Performs the modified subset construction based on the
+/// given alphabet.
 template<typename TState, typename TChar>
 DFAutomaton<LinearSet<TState>, TChar> ENFAutomaton<TState, TChar>::ToDFAutomaton(LinearSet<TChar> Alphabet) const
 {
@@ -160,47 +173,53 @@ DFAutomaton<LinearSet<TState>, TChar> ENFAutomaton<TState, TChar>::ToDFAutomaton
             }
             processedStates.Add(last);
             if (this->ContainsAcceptingState(last))
-            {
                 accStates.Add(last);
-            }
+
         }
         nextStates.RemoveLast();
         nextStates.AddAll(accumulatedStates);
     }
     TransitionTable<std::pair<LinearSet<TState>, TChar>, LinearSet<TState>> transFun(transMap);
-    return DFAutomaton<LinearSet<TState>, TChar>(startState, accStates, transFun);
+    return DFAutomaton<LinearSet<TState>, TChar>(startState, 
+                                                 accStates, transFun);
 }
 
+/// \brief Gets the e-NFA's set of accepting states.
 template<typename TState, typename TChar>
 LinearSet<TState> ENFAutomaton<TState, TChar>::getAcceptingStates() const
 {
     return this->AcceptingStates_value;
 }
 
+/// \brief Sets the e-NFA's set of accepting states.
 template<typename TState, typename TChar>
 void ENFAutomaton<TState, TChar>::setAcceptingStates(LinearSet<TState> value)
 {
     this->AcceptingStates_value = value;
 }
 
+/// \brief Gets the e-NFA's start state.
 template<typename TState, typename TChar>
 TState ENFAutomaton<TState, TChar>::getStartState() const
 {
     return this->StartState_value;
 }
 
+/// \brief Sets the e-NFA's start state.
 template<typename TState, typename TChar>
 void ENFAutomaton<TState, TChar>::setStartState(TState value)
 {
     this->StartState_value = value;
 }
 
+/// \brief Gets the e-NFA's transition function.
 template<typename TState, typename TChar>
 TransitionTable<std::pair<TState, Optional<TChar>>, LinearSet<TState>> ENFAutomaton<TState, TChar>::getTransitionFunction() const
 {
     return this->TransitionFunction_value;
 }
 
+/// \brief Sets the e-NFA's transition function.
 template<typename TState, typename TChar>
 void ENFAutomaton<TState, TChar>::setTransitionFunction(TransitionTable<std::pair<TState, Optional<TChar>>, LinearSet<TState>> value)
 {

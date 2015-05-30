@@ -1,10 +1,12 @@
 #pragma once
 #include <unordered_map>
 #include "IFunction.h"
+#include "HashExtensions.h"
 
 namespace Automata
 {
-    /// \brief Defines a transition table that uses an unordered_map under the hood.
+    /// \brief Defines a transition table that uses an unordered_map
+    /// under the hood.
     template<typename TSource, typename TTarget>
     class TransitionTable : public virtual IFunction<TSource, TTarget>
     {

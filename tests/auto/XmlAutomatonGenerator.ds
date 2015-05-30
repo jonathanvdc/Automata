@@ -25,9 +25,9 @@ namespace Automata
             sb.AppendLine();
         }
 
-        public string GenerateNFA(Random rand, char[] alpha, int maxStates, bool AllowEpsilon)
+        public const string OutputNFA(NFA Automaton, bool AllowEpsilon)
         {
-            var states = AutoTests.GenerateStates(rand, maxStates);
+            var states = Automaton.States;
 
             var sb = new StringBuilder();
 
@@ -37,22 +37,14 @@ namespace Automata
                 sb.AppendLine("<TYPE>nfa</TYPE>");
 
             WriteArray(sb, "STATES", states);
-            WriteArray(sb, "SYMBOLS", alpha);
-            WriteArray(sb, "STARTSTATE", new char[] { AutoTests.GetRandomElement<char>(states, rand) });
+            WriteArray(sb, "SYMBOLS", Automaton.Alphabet);
+            WriteArray(sb, "STARTSTATE", new char[] { Automaton.StartState });
 
-            int acceptCount = rand.Next(0, states.Length);
-            var accepted = new HashSet<char>();
-            for (int i = 0; i < acceptCount; i++)
-            {
-                accepted.Add(AutoTests.GetRandomElement<char>(states, rand));
-            }
-            WriteArray(sb, "ACCEPTSTATES", accepted);
+            WriteArray(sb, "ACCEPTSTATES", Automaton.FinalStates);
 
             sb.AppendLine("<TRANSITIONFUNCTION>");
 
-            var trans = AutoTests.GenerateTransitions(rand, AllowEpsilon, states, alpha);
-
-            foreach (var item in trans)
+            foreach (var item in Automaton.Transitions)
             {
                 sb.Append("<T>");
                 sb.Append(item.Item1);

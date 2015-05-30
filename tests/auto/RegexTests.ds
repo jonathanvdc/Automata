@@ -42,9 +42,9 @@ namespace Automata
 
         private const string GetBestMatch(Regex re, string Value)
         {
-            string best = null
+            string best = null;
             foreach (Match item in re.Matches(Value))
-                if (best == null || item.Length > best.Length)
+                if (string.IsNullOrEmpty(best) || item.Length > best.Length)
             {
                 best = item.Value;
             }
@@ -57,7 +57,7 @@ namespace Automata
 
             string bestMatch = GetBestMatch(re, testStr); // Try to find a substring that matches
 
-            *IsMatch = bestMatch != null;
+            *IsMatch = !string.IsNullOrEmpty(bestMatch);
             if (*IsMatch)
             {
                 if (string.IsNullOrEmpty(bestMatch)) // Consoles don't like empty strings
@@ -88,11 +88,15 @@ namespace Automata
             int maxAlphabetLength = AutoTests.GetOptionalClampedInt32(5, 26, 26, Args, "alphabet size");
             int maxStates = AutoTests.GetOptionalClampedInt32(6, 5, 26, Args, "state count");
             int maxStringLength = AutoTests.GetOptionalInt32(Args, 7, 5);
+            string outputPath = AutoTests.GetOptionalString(Args, 8, "tests");
 
             int nonTrivialCount = 0;
 
             for (int i = 0; i < testCount; i++)
             {
+                string enfaOPath = outputPath + "/Test" + nonTrivialCount + ".enfa";
+                string dfaOPath = outputPath + "/Test" + nonTrivialCount + ".dfa";
+
                 var alpha = AutoTests.GenerateAlphabet(rand, maxAlphabetLength);
 
                 Console.WriteLine("Generating regex...");
@@ -101,8 +105,8 @@ namespace Automata
                 Console.WriteLine("Generated regex: '" + csStyleRegex + "'");
                 AutoTests.WriteTo(csStyleRegex, "temp_input.re");
                 Console.WriteLine("Performing re2enfa...");
-                AutoTests.RunTimedCmd(appPath, new string[] { "re2enfa", "temp_input.re", "temp_output.enfa" }, re2enfaTime);
-                AutoTests.RunTimedCmd(appPath, new string[] { "mssc", "temp_output.enfa", "temp_output.dfa" }, sscTime);
+                AutoTests.RunTimedCmd(appPath, new string[] { "re2enfa", "temp_input.re", enfaOPath }, re2enfaTime);
+                AutoTests.RunTimedCmd(appPath, new string[] { "mssc", enfaOPath, dfaOPath }, sscTime);
                 Console.WriteLine("Performing mssc...");
                 Console.WriteLine("Performed re2enfa and mssc");
 
@@ -113,16 +117,20 @@ namespace Automata
 
                 var unixRe = genRe.ToRegex();
 
+                var testStrings = new StringBuilder();
+
                 for (int j = 0; j < stringTestCount; j++)
                 {
                     string testStr = GenerateTestString(rand, unixRe,
                         alpha, maxStringLength,
                         &bool referenceResult);
 
+                    testStrings.Append(testStr);
+
                     Console.WriteLine("Testing '" + testStr + "'...");
 
-                    string enfaOutput = AutoTests.RunTimedCmd(appPath, new string[] { "accepts", "temp_output.enfa", testStr }, nfaTime);
-                    string dfaOutput = AutoTests.RunTimedCmd(appPath, new string[] { "accepts", "temp_output.dfa", testStr }, dfaTime);
+                    string enfaOutput = AutoTests.RunTimedCmd(appPath, new string[] { "accepts", enfaOPath, testStr }, nfaTime);
+                    string dfaOutput = AutoTests.RunTimedCmd(appPath, new string[] { "accepts", dfaOPath, testStr }, dfaTime);
 
                     if (!enfaOutput.Equals(dfaOutput))
                     {
@@ -131,7 +139,7 @@ namespace Automata
                             dfaOutput + "' when running the dfa. Stopping here!");
                         return;
                     }
-                    else if (enfaOutput == null || dfaOutput == null)
+                    else if (object.ReferenceEquals(enfaOutput, null) || object.ReferenceEquals(dfaOutput, null))
                     {
                         return;
                     }
@@ -139,6 +147,9 @@ namespace Automata
                     Console.WriteLine("Output for '" + testStr + "': '" + dfaOutput.Trim(null) + "'");
 
                     bool isAccepted = dfaOutput.Trim(null).Equals("The automaton accepts the given string.");
+                    referenceResult = isAccepted;
+
+                    testStrings.AppendLine(" - " + dfaOutput.Trim(null));
 
                     if (!referenceResult && isAccepted)
                     {
@@ -156,7 +167,7 @@ namespace Automata
                             "'. Stopping here!");
                         return;
                     }
-                    else if (previousOutput == null)
+                    else if (object.ReferenceEquals(previousOutput, null))
                     {
                         previousOutput = dfaOutput;
                     }
@@ -168,6 +179,9 @@ namespace Automata
 
                 if (!isTrivial)
                 {
+                    nonTrivialCount++;
+                    AutoTests.WriteTo(csStyleRegex, outputPath + "/Test" + nonTrivialCount + ".re");
+                    AutoTests.WriteTo((string)testStrings, outputPath + "/Test" + nonTrivialCount + ".input");
                     nonTrivialCount++;
                 }
 

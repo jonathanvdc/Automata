@@ -8,9 +8,8 @@ using namespace Automata;
 /// \brief Creates a new tagging function from the given tag.
 template<typename T, typename TTag>
 TagFunction<T, TTag>::TagFunction(TTag Tag)
-{
-    this->Tag = Tag;
-}
+    : Tag(Tag)
+{ }
 
 /// \brief Applies the function to the given value.
 template<typename T, typename TTag>

@@ -2,10 +2,10 @@ public struct Optional<T>
 {
     public const this(set T Value) { HasValue = true; }
     public const this() { HasValue = false; }
-    
+
     public bool HasValue;
     public T Value;
-    
+
     public const bool operator==(Optional<T> Other)
     {
         if (HasValue)
@@ -32,5 +32,11 @@ public struct Optional<T>
     public const bool operator!=(T Other)
     {
         return !this.HasValue || this.Value == Other;
+    }
+
+    public const int operator hash()
+    {
+        if (!HasValue) return 0;
+        else return hash(Value);
     }
 }

@@ -1,0 +1,42 @@
+nfa
+start b
+accepts s j k
+transitions
+
+b 1 c
+b 2 s
+b 2 a
+c 1 d
+c 2 z
+c 1 d
+s 1 r
+s 2 k
+s 2 t
+k 1 b
+k 2 y
+k 2 j
+j 1 u
+j 2 s
+j 1 i
+a 1 d
+a 2 i
+a 1 j
+z 1 s
+z 2 a
+z 2 j
+e 1 a
+e 2 b
+e 2 k
+r 1 c
+r 2 j
+r 2 y
+t 1 y
+t 2 k
+t 1 k
+y 1 d
+y 2 d
+y 2 b
+u 1 d
+u 2 d
+i 1 b
+i 2 k

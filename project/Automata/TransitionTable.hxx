@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <utility>
 #include "IFunction.h"
+#include "HashExtensions.h"
 
 using namespace Automata;
 
@@ -12,9 +13,8 @@ TransitionTable<TSource, TTarget>::TransitionTable()
 
 template<typename TSource, typename TTarget>
 TransitionTable<TSource, TTarget>::TransitionTable(std::unordered_map<TSource, TTarget> table)
-{
-    this->table = table;
-}
+    : table(table)
+{ }
 
 template<typename TSource, typename TTarget>
 void TransitionTable<TSource, TTarget>::Add(TransitionTable<TSource, TTarget> Transitions)
