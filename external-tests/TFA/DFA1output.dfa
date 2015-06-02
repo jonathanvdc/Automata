@@ -1,0 +1,7 @@
+dfa
+start {q0,q1,q2}
+accepts {q3}
+transitions
+{q1,q2} 0 {q3}
+{q0,q1,q2} 0 {q0,q1,q2}
+{q0,q1,q2} 1 {q1,q2}

@@ -1,0 +1,54 @@
+dfa
+start {b}
+accepts {j} {d,k} {c,j} {j,s} {d,j,k} {b,d,k} {c,j,k,s} {b,d,j,k} {b,c,d,k} {c,j,s} {j,k,s} {s} {j,k} {k,s} {b,j} {c,d,k} {c,j,k}
+transitions
+{j,k} 1 {b,d,k}
+{j,k} 2 {c,j,s}
+{b,c,d,k} 2 {c,j,k,s}
+{d} 1 {}
+{k,s} 2 {c,j,k}
+{c} 1 {d}
+{c,j,k} 2 {c,j,s}
+{b,d} 2 {k,s}
+{d,k} 1 {b}
+{b} 2 {k,s}
+{b,c,d} 2 {j,k,s}
+{c,d} 1 {d}
+{s} 1 {j}
+{j,s} 1 {d,j,k}
+{b,c} 1 {c,d}
+{c} 2 {j}
+{c,d,k} 1 {b,d}
+{c,j,k} 1 {b,d,k}
+{j,s} 2 {j,k,s}
+{k,s} 1 {b,j}
+{} 2 {}
+{b,c} 2 {j,k,s}
+{b,d,k} 2 {c,j,k,s}
+{c,j} 1 {d,k}
+{b,d,j,k} 1 {b,c,d,k}
+{c,j,s} 2 {j,k,s}
+{b,j} 2 {k,s}
+{j} 1 {d,k}
+{b,d} 1 {c}
+{c,j} 2 {j,s}
+{} 1 {}
+{d,j,k} 1 {b,d,k}
+{j} 2 {s}
+{c,d} 2 {j}
+{d} 2 {}
+{d,j,k} 2 {c,j,s}
+{b,j} 1 {c,d,k}
+{c,j,s} 1 {d,j,k}
+{j,k,s} 2 {c,j,k,s}
+{b,d,k} 1 {b,c}
+{d,k} 2 {c,j}
+{j,k,s} 1 {b,d,j,k}
+{c,j,k,s} 1 {b,d,j,k}
+{b,c,d} 1 {c,d}
+{c,j,k,s} 2 {c,j,k,s}
+{s} 2 {j,k}
+{b,c,d,k} 1 {b,c,d}
+{b,d,j,k} 2 {c,j,k,s}
+{b} 1 {c}
+{c,d,k} 2 {c,j}
