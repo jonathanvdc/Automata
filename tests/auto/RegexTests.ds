@@ -92,7 +92,8 @@ namespace Automata
 
             int nonTrivialCount = 0;
 
-            for (int i = 0; i < testCount; i++)
+            int i;
+            for (i = 0; nonTrivialCount < testCount; i++)
             {
                 string enfaOPath = outputPath + "/Test" + nonTrivialCount + ".enfa";
                 string dfaOPath = outputPath + "/Test" + nonTrivialCount + ".dfa";
@@ -182,15 +183,14 @@ namespace Automata
                     nonTrivialCount++;
                     AutoTests.WriteTo(csStyleRegex, outputPath + "/Test" + nonTrivialCount + ".re");
                     AutoTests.WriteTo((string)testStrings, outputPath + "/Test" + nonTrivialCount + ".input");
-                    nonTrivialCount++;
                 }
 
-                Console.WriteLine("Just tested regex " + (i + 1) + " out of " + testCount + ". So far so good.");
+                Console.WriteLine("Just ran regex " + (i + 1) + ". We need " + testCount + " non-trivial regex in total. So far so good.");
                 Console.WriteLine();
             }
 
             Console.WriteLine("Seems like it all checks out.");
-            Console.WriteLine(testCount + " regexes were tested, " + nonTrivialCount + " of which were nontrivial.");
+            Console.WriteLine(i + " regexes were tested, " + nonTrivialCount + " of which were nontrivial.");
 
             Console.WriteLine();
             Console.WriteLine("Timing report:");

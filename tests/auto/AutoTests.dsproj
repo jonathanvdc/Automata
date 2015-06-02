@@ -2,6 +2,7 @@
 <Project Name="AutoTests">
   <Setter Property="TargetPlatform" Value="clr/release-console" />
   <Setter Property="AssemblyName" Value="AutoTests" />
+  <Option Key="o" Value="AutoTests.exe" />
   <Option Key="platform" Value="clr/release-console" />
   <Option Key="pedantic" Value="true" />
   <ItemGroup>
