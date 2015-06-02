@@ -1,0 +1,10 @@
+dfa
+start {A,B}
+accepts
+transitions
+{A,B} k {A}
+{A,B} l {A,E}
+{A} k {A}
+{A,E} k {A}
+{A} l {A}
+{A,E} l {A}

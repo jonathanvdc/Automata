@@ -1,0 +1,19 @@
+dfa
+start {B,G}
+accepts
+transitions
+{A,B,C,D,E,F,G,H,I} h {B,C,D,F,G,H,I}
+{} g {}
+{B,G} h {B,C,D,F,G,H,I}
+{} z {}
+{A,B,C,D,E,F,G,H,I} g {A,B,C,D,E,F,G,H,I}
+{} h {}
+{B,G} g {A,B,C,D,F,G,H,I}
+{B,G} z {}
+{A,B,C,D,F,G,H,I} h {B,C,D,F,G,H,I}
+{A,B,C,D,F,G,H,I} g {A,B,C,D,E,F,G,H,I}
+{A,B,C,D,E,F,G,H,I} z {A,B,C,D,F,G,H,I}
+{A,B,C,D,F,G,H,I} z {A,B,C,D,F,G,H,I}
+{B,C,D,F,G,H,I} h {B,C,D,F,G,H,I}
+{B,C,D,F,G,H,I} g {A,B,C,D,E,F,G,H,I}
+{B,C,D,F,G,H,I} z {A,B,C,D,F,G,H,I}

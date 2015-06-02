@@ -1,0 +1,37 @@
+digraph nfa {
+    rankdir = LR;
+    __start [style = invis, shape = point];
+    __start -> "D" [ label = "start" ];
+    node [shape = doublecircle]; "E" "D" "A" "C"
+    node [shape = circle];
+    "D" -> "C" [ label = "y" ];
+    "D" -> "A" [ label = "y" ];
+    "A" -> "D" [ label = "y" ];
+    "A" -> "C" [ label = "y" ];
+    "A" -> "E" [ label = "y" ];
+    "D" -> "A" [ label = "n" ];
+    "B" -> "D" [ label = "h" ];
+    "B" -> "B" [ label = "h" ];
+    "B" -> "C" [ label = "h" ];
+    "C" -> "E" [ label = "n" ];
+    "C" -> "C" [ label = "n" ];
+    "C" -> "D" [ label = "n" ];
+    "C" -> "D" [ label = "h" ];
+    "C" -> "B" [ label = "h" ];
+    "A" -> "C" [ label = "n" ];
+    "A" -> "D" [ label = "n" ];
+    "A" -> "A" [ label = "n" ];
+    "C" -> "A" [ label = "y" ];
+    "E" -> "C" [ label = "n" ];
+    "E" -> "E" [ label = "n" ];
+    "E" -> "B" [ label = "n" ];
+    "E" -> "E" [ label = "h" ];
+    "B" -> "D" [ label = "l" ];
+    "B" -> "A" [ label = "l" ];
+    "B" -> "B" [ label = "l" ];
+    "A" -> "E" [ label = "h" ];
+    "A" -> "D" [ label = "h" ];
+    "E" -> "E" [ label = "y" ];
+    "E" -> "C" [ label = "y" ];
+    "A" -> "B" [ label = "l" ];
+}

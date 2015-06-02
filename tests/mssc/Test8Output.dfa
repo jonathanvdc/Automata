@@ -1,0 +1,12 @@
+dfa
+start {C}
+accepts {C}
+transitions
+{C} r {}
+{} c {}
+{} k {}
+{C} c {}
+{C} k {}
+{} r {}
+{C} t {C}
+{} t {}

@@ -1,0 +1,8 @@
+dfa
+start {A}
+accepts
+transitions
+{A} n {}
+{A} a {A}
+{} n {}
+{} a {}

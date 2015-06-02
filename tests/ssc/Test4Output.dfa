@@ -1,0 +1,10 @@
+dfa
+start {G}
+accepts
+transitions
+{G} y {}
+{G} i {F}
+{} y {}
+{} i {}
+{F} y {}
+{F} i {}

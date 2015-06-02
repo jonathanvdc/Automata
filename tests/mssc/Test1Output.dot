@@ -1,0 +1,11 @@
+digraph dfa {
+    rankdir = LR;
+    __start [style = invis, shape = point];
+    __start -> "{B,C,D,F,G}" [ label = "start" ];
+    node [shape = doublecircle]; "{B,C,D,F,G}" "{A,B,C,D,E,F,G}"
+    node [shape = circle];
+    "{B,C,D,F,G}" -> "{A,B,C,D,E,F,G}" [ label = "g" ];
+    "{B,C,D,F,G}" -> "{B,C,D,F,G}" [ label = "w" ];
+    "{A,B,C,D,E,F,G}" -> "{A,B,C,D,E,F,G}" [ label = "g" ];
+    "{A,B,C,D,E,F,G}" -> "{B,C,D,F,G}" [ label = "w" ];
+}

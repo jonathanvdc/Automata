@@ -1,0 +1,24 @@
+digraph nfa {
+    rankdir = LR;
+    __start [style = invis, shape = point];
+    __start -> "F" [ label = "start" ];
+    node [shape = doublecircle]; "F" "B" "C" "A"
+    node [shape = circle];
+    "B" -> "C" [ label = "s" ];
+    "B" -> "F" [ label = "s" ];
+    "D" -> "B" [ label = "q" ];
+    "A" -> "F" [ label = "s" ];
+    "E" -> "C" [ label = "s" ];
+    "B" -> "A" [ label = "q" ];
+    "B" -> "D" [ label = "q" ];
+    "D" -> "C" [ label = "s" ];
+    "A" -> "D" [ label = "q" ];
+    "C" -> "E" [ label = "s" ];
+    "C" -> "B" [ label = "s" ];
+    "C" -> "C" [ label = "s" ];
+    "E" -> "A" [ label = "q" ];
+    "E" -> "E" [ label = "q" ];
+    "C" -> "A" [ label = "q" ];
+    "C" -> "B" [ label = "q" ];
+    "F" -> "A" [ label = "q" ];
+}

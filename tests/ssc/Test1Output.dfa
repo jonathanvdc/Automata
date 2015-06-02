@@ -1,0 +1,32 @@
+dfa
+start {F}
+accepts {F} {A} {B} {A,D} {B,D} {A,B,D} {C,F} {A,B} {B,C,E} {A,B,D,E} {B,C,E,F} {C}
+transitions
+{D} q {B}
+{F} s {}
+{A} s {F}
+{A,D} s {C,F}
+{C,F} s {B,C,E}
+{D} s {C}
+{F} q {A}
+{A} q {D}
+{B} q {A,D}
+{B} s {C,F}
+{A,D} q {B,D}
+{C,F} q {A,B}
+{B,D} s {C,F}
+{B,D} q {A,B,D}
+{A,B,D,E} s {C,F}
+{A,B,D} s {C,F}
+{A,B,D,E} q {A,B,D,E}
+{A,B,D} q {A,B,D}
+{A,B} s {C,F}
+{A,B} q {A,D}
+{B,C,E} s {B,C,E,F}
+{B,C,E} q {A,B,D,E}
+{B,C,E,F} s {B,C,E,F}
+{B,C,E,F} q {A,B,D,E}
+{C} s {B,C,E}
+{C} q {A,B}
+{} s {}
+{} q {}

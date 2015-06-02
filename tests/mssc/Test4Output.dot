@@ -1,0 +1,17 @@
+digraph dfa {
+    rankdir = LR;
+    __start [style = invis, shape = point];
+    __start -> "{A,E,F}" [ label = "start" ];
+    node [shape = doublecircle]; "{A,B,D,E,F,H}" "{A,B,C,D,E,F,G}" "{C,E,F,G}"
+    node [shape = circle];
+    "{C,E,F,G}" -> "{A,B,D,E,F}" [ label = "b" ];
+    "{A,E,F}" -> "{C,E,F,G}" [ label = "b" ];
+    "{C,E,F,G}" -> "{A,B,D,E,F,H}" [ label = "f" ];
+    "{A,E,F}" -> "{A,B,D,E,F,H}" [ label = "f" ];
+    "{A,B,D,E,F,H}" -> "{A,B,C,D,E,F,G}" [ label = "b" ];
+    "{A,B,C,D,E,F,G}" -> "{A,B,C,D,E,F,G}" [ label = "b" ];
+    "{A,B,D,E,F,H}" -> "{A,B,D,E,F,H}" [ label = "f" ];
+    "{A,B,D,E,F}" -> "{A,B,C,D,E,F,G}" [ label = "b" ];
+    "{A,B,C,D,E,F,G}" -> "{A,B,D,E,F,H}" [ label = "f" ];
+    "{A,B,D,E,F}" -> "{A,B,D,E,F,H}" [ label = "f" ];
+}

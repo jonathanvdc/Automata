@@ -1,0 +1,13 @@
+digraph dfa {
+    rankdir = LR;
+    __start [style = invis, shape = point];
+    __start -> "{G}" [ label = "start" ];
+    node [shape = doublecircle];
+    node [shape = circle];
+    "{G}" -> "{F}" [ label = "i" ];
+    "{G}" -> "{}" [ label = "y" ];
+    "{}" -> "{}" [ label = "i" ];
+    "{}" -> "{}" [ label = "y" ];
+    "{F}" -> "{}" [ label = "i" ];
+    "{F}" -> "{}" [ label = "y" ];
+}

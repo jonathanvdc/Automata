@@ -1,0 +1,6 @@
+dfa
+start {B}
+accepts {B} {A,B}
+transitions
+{B} p {A,B}
+{A,B} p {A,B}

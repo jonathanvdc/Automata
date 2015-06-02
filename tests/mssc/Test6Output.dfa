@@ -1,0 +1,8 @@
+dfa
+start {A}
+accepts
+transitions
+{A} z {}
+{A} s {}
+{} z {}
+{} s {}

@@ -1,0 +1,5 @@
+dfa
+start {A}
+accepts
+transitions
+{A} l {A}

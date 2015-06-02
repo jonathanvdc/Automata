@@ -1,0 +1,8 @@
+dfa
+start {B,C,D,F,G}
+accepts {B,C,D,F,G} {A,B,C,D,E,F,G}
+transitions
+{B,C,D,F,G} w {B,C,D,F,G}
+{B,C,D,F,G} g {A,B,C,D,E,F,G}
+{A,B,C,D,E,F,G} w {B,C,D,F,G}
+{A,B,C,D,E,F,G} g {A,B,C,D,E,F,G}

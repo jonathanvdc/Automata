@@ -1,0 +1,22 @@
+digraph dfa {
+    rankdir = LR;
+    __start [style = invis, shape = point];
+    __start -> "{B,G}" [ label = "start" ];
+    node [shape = doublecircle];
+    node [shape = circle];
+    "{B,G}" -> "{B,C,D,F,G,H,I}" [ label = "h" ];
+    "{A,B,C,D,E,F,G,H,I}" -> "{B,C,D,F,G,H,I}" [ label = "h" ];
+    "{}" -> "{}" [ label = "g" ];
+    "{}" -> "{}" [ label = "z" ];
+    "{B,G}" -> "{A,B,C,D,F,G,H,I}" [ label = "g" ];
+    "{A,B,C,D,E,F,G,H,I}" -> "{A,B,C,D,E,F,G,H,I}" [ label = "g" ];
+    "{}" -> "{}" [ label = "h" ];
+    "{B,G}" -> "{}" [ label = "z" ];
+    "{A,B,C,D,F,G,H,I}" -> "{B,C,D,F,G,H,I}" [ label = "h" ];
+    "{A,B,C,D,F,G,H,I}" -> "{A,B,C,D,E,F,G,H,I}" [ label = "g" ];
+    "{A,B,C,D,E,F,G,H,I}" -> "{A,B,C,D,F,G,H,I}" [ label = "z" ];
+    "{A,B,C,D,F,G,H,I}" -> "{A,B,C,D,F,G,H,I}" [ label = "z" ];
+    "{B,C,D,F,G,H,I}" -> "{B,C,D,F,G,H,I}" [ label = "h" ];
+    "{B,C,D,F,G,H,I}" -> "{A,B,C,D,E,F,G,H,I}" [ label = "g" ];
+    "{B,C,D,F,G,H,I}" -> "{A,B,C,D,F,G,H,I}" [ label = "z" ];
+}

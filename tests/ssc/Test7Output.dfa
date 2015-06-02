@@ -1,0 +1,10 @@
+dfa
+start {B}
+accepts
+transitions
+{B} b {}
+{B} j {}
+{B} k {}
+{} b {}
+{} j {}
+{} k {}

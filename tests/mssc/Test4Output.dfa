@@ -1,0 +1,14 @@
+dfa
+start {A,E,F}
+accepts {A,B,D,E,F,H} {A,B,C,D,E,F,G} {C,E,F,G}
+transitions
+{C,E,F,G} b {A,B,D,E,F}
+{A,E,F} b {C,E,F,G}
+{C,E,F,G} f {A,B,D,E,F,H}
+{A,E,F} f {A,B,D,E,F,H}
+{A,B,C,D,E,F,G} b {A,B,C,D,E,F,G}
+{A,B,D,E,F,H} b {A,B,C,D,E,F,G}
+{A,B,C,D,E,F,G} f {A,B,D,E,F,H}
+{A,B,D,E,F} b {A,B,C,D,E,F,G}
+{A,B,D,E,F,H} f {A,B,D,E,F,H}
+{A,B,D,E,F} f {A,B,D,E,F,H}

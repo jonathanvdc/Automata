@@ -1,0 +1,15 @@
+digraph nfa {
+    rankdir = LR;
+    __start [style = invis, shape = point];
+    __start -> "B" [ label = "start" ];
+    node [shape = doublecircle]; "A"
+    node [shape = circle];
+    "A" -> "C" [ label = "j" ];
+    "A" -> "B" [ label = "b" ];
+    "A" -> "C" [ label = "b" ];
+    "D" -> "A" [ label = "k" ];
+    "D" -> "B" [ label = "k" ];
+    "D" -> "D" [ label = "k" ];
+    "C" -> "D" [ label = "j" ];
+    "D" -> "A" [ label = "j" ];
+}

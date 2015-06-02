@@ -1,0 +1,35 @@
+digraph dfa {
+    rankdir = LR;
+    __start [style = invis, shape = point];
+    __start -> "{F}" [ label = "start" ];
+    node [shape = doublecircle]; "{F}" "{A}" "{B}" "{A,D}" "{B,D}" "{A,B,D}" "{C,F}" "{A,B}" "{B,C,E}" "{A,B,D,E}" "{B,C,E,F}" "{C}"
+    node [shape = circle];
+    "{F}" -> "{}" [ label = "s" ];
+    "{D}" -> "{B}" [ label = "q" ];
+    "{A,D}" -> "{C,F}" [ label = "s" ];
+    "{C,F}" -> "{B,C,E}" [ label = "s" ];
+    "{A}" -> "{F}" [ label = "s" ];
+    "{F}" -> "{A}" [ label = "q" ];
+    "{D}" -> "{C}" [ label = "s" ];
+    "{A}" -> "{D}" [ label = "q" ];
+    "{B}" -> "{A,D}" [ label = "q" ];
+    "{B}" -> "{C,F}" [ label = "s" ];
+    "{C,F}" -> "{A,B}" [ label = "q" ];
+    "{A,D}" -> "{B,D}" [ label = "q" ];
+    "{B,D}" -> "{C,F}" [ label = "s" ];
+    "{B,D}" -> "{A,B,D}" [ label = "q" ];
+    "{A,B,D,E}" -> "{C,F}" [ label = "s" ];
+    "{A,B,D}" -> "{C,F}" [ label = "s" ];
+    "{A,B,D,E}" -> "{A,B,D,E}" [ label = "q" ];
+    "{A,B,D}" -> "{A,B,D}" [ label = "q" ];
+    "{A,B}" -> "{C,F}" [ label = "s" ];
+    "{A,B}" -> "{A,D}" [ label = "q" ];
+    "{B,C,E}" -> "{B,C,E,F}" [ label = "s" ];
+    "{B,C,E}" -> "{A,B,D,E}" [ label = "q" ];
+    "{B,C,E,F}" -> "{B,C,E,F}" [ label = "s" ];
+    "{B,C,E,F}" -> "{A,B,D,E}" [ label = "q" ];
+    "{C}" -> "{B,C,E}" [ label = "s" ];
+    "{C}" -> "{A,B}" [ label = "q" ];
+    "{}" -> "{}" [ label = "s" ];
+    "{}" -> "{}" [ label = "q" ];
+}

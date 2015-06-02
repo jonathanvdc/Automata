@@ -1,0 +1,29 @@
+dfa
+start {A}
+accepts {A,B,C,D,E,F,G,H} {A,B,C,E,F,G} {A,B,C,E,F,G,H}
+transitions
+{A,B,C,E,F,G} u {A,B,C,D,E,F,G,H}
+{A,B,C,E,F,G} m {A,B,C,D,E,F,G,H}
+{A,B,C,D,E,F,G,H} i {A,B,C,D,E,F,G,H}
+{} i {}
+{A} m {A,B,C,E,F,G,H}
+{A} u {}
+{A} t {A,B,C,E,F,G}
+{A,B,C,D,E,F,G,H} s {A,B,C,E,F,G,H}
+{A,B,C,D,E,F,G,H} u {A,B,C,D,E,F,G,H}
+{} u {}
+{A,B,C,E,F,G,H} m {A,B,C,D,E,F,G,H}
+{} m {}
+{A,B,C,E,F,G,H} u {A,B,C,D,E,F,G,H}
+{A,B,C,D,E,F,G,H} m {A,B,C,D,E,F,G,H}
+{A} i {A,B,C,D,E,F,G,H}
+{A} s {A,B,C,E,F,G}
+{A,B,C,D,E,F,G,H} t {A,B,C,D,E,F,G,H}
+{} t {}
+{} s {}
+{A,B,C,E,F,G} t {A,B,C,E,F,G}
+{A,B,C,E,F,G} i {A,B,C,D,E,F,G,H}
+{A,B,C,E,F,G} s {A,B,C,E,F,G,H}
+{A,B,C,E,F,G,H} t {A,B,C,E,F,G}
+{A,B,C,E,F,G,H} i {A,B,C,D,E,F,G,H}
+{A,B,C,E,F,G,H} s {A,B,C,E,F,G,H}
